@@ -12,8 +12,9 @@
            setting up the canvas in the art.js file. -->
     <!--
     <script src="thirdparty/three-r128.min.js"></script>
+     -->
     <script src="thirdparty/p5-v1.4.0.min.js"></script>
-    -->
+   
 
     <!-- js/styles -->
     <script src="boot.js"></script>
@@ -24,9 +25,32 @@
   </head>
   <body class="body-ct">
     <div class="controls">
-      <label for="width">Width</label>
-      <input id="width" type="range" min="0" max="10" value="5" step="1"
-        oninput="onChangeWidth(this.value);">
+
+      <label>press P to pause</label>
+      <div>&nbsp;</div>
+      <label>press R to reset</label>
+      <div>&nbsp;</div>
+      <label>press A to animate</label>
+      <div>&nbsp;</div>
+
+      <label for="divXSlide">divXSlide</label>
+      <input id="divXSlide" type="range" min="-400" max="400" value="0" step="1" oninput="onChangeDivXSlide(this.value);">
+
+      <label for="flattenAng">flattenAng</label>
+      <input id="flattenAng" type="range" min="-400" max="400" value="0" step="1" oninput="onChangeFlattenAng(this.value);">
+
+      <label for="frameRate">frameRate</label>
+      <input id="frameRate" type="range" min="-7" max="60" value="0" step="1" oninput="onChangeFrameRate(this.value);">
+      
+      <label for="flutterAdd">flutterAdd</label>
+      <input id="flutterAdd" type="range" min="-10" max="20" value="0" step="1" oninput="onChangeFlutterAdd(this.value);">
+      <!--
+      <label for="heightPosIncrSlide">heightPosIncrSlide</label>
+      <input id="heightPosIncrSlide" type="range" min="-1" max="1" value="0" step="0.1" oninput="onChangeHeightPosIncrSlide(this.value);">
+      -->
+      <label for="lineThickness">lineThickness</label>
+      <input id="lineThickness" type="range" min="0" max="4" value="0" step="1" oninput="onChangeLineThickness(this.value);">
+
     </div>
  </body>
 </html>
