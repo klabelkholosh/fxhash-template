@@ -25,3 +25,7 @@ const onChangeFlutterAdd = value => {
 const onChangeLineThickness = value => {
   tokenState.lineThickness = parseInt(value);
 };
+
+const onChangeAnimSpeed = value => {
+  tokenState.animSpeed = parseInt(value);
+};

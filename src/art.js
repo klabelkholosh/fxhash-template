@@ -141,8 +141,8 @@ function draw() {
 
   // animation attempts
   if (tokenState.animateThis === true) {
-    tokenState.divXSlide = sin(millis() / 4000) * 100;
-    tokenState.flattenAng = sin(millis() / 4000) * 100;
+    tokenState.divXSlide = sin(millis() / tokenState.animSpeed) * 100;
+    tokenState.flattenAng = sin(millis() / tokenState.animSpeed) * 100;
   }
 
 
@@ -180,6 +180,7 @@ function resetState() {
   tokenState.frameRate = 0;
   tokenState.flutterAdd = 0;
   tokenState.animateThis = false;
+  tokenState.animSpeed = 2000;
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------
