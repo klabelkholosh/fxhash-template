@@ -51,11 +51,11 @@ function setup() {
 
   // grab hash from tokenData and use it to create a p5js randomSeed
   // any random() call after this is always deterministic to the supplied seed!
-  console.log('tokenData.hash is: ', tokenData.hash);
   hash = tokenData.hash;
   seed = parseInt(hash.slice(0, 16), 16)
   randomSeed(seed);
-  
+  console.log('tokenData.hash is: ', tokenData.hash);
+
   // for now, assuming same height as width (and using window height as default)
   // the defined x/y edges of a 'portal' is always a percentage size of the height of the canvas
   canvasWidth   = windowHeight;
@@ -119,6 +119,9 @@ function setup() {
   metadata.lineStyle = curveCh ? 'curved' : 'straight';
   metadata.lifting = randomDOY.getDate() + '-' + randomDOY.getMonth();
   console.log(metadata);
+  
+  // place an initial portal, just in case script starts off non-animated
+  placePortal();
 
 }
 
@@ -129,8 +132,25 @@ function setup() {
  *  global scope.
  */
 function draw() {
+
+  // only animate if moving is true
+  if (tokenState.moving) {
+    
+    placePortal();
+
+    // if a particular day and month, slowly animate the script further for the entire day.
+    if ((new Date().getDate() === randomDOY.getDate()) && (new Date().getMonth() === randomDOY.getMonth())) {
+      animCounter = animCounter + 100;
+      tokenState.divXSlide = sin(animCounter / 8000) * 100;
+      tokenState.flattenAng = sin(animCounter / 8000) * 100;
+    }
+  }
   
-  background(bgCl);
+}
+
+// define our canvas bg and draw a portal.. pulled out of draw() function so that setup() can call this initially for non-animated states
+function placePortal() {
+  background(bgCl);                                           // set bg color
   fltTwk = 10 + tokenState.flutterAdd;                        // default flutter tweak is 10, plus/minus user setting
   noFill();
 
@@ -138,22 +158,7 @@ function draw() {
   for(let p = 0; p < portals.length; p++) {
     drawPortal(
         ...portals[p]
-     );
-  }
-
-  // if a particular day and month, slowly animate the script further for the entire day.
-  if ((new Date().getDate() === randomDOY.getDate()) && (new Date().getMonth() === randomDOY.getMonth())) {
-    animCounter = animCounter + 100;
-    tokenState.divXSlide = sin(animCounter / 8000) * 100;
-    tokenState.flattenAng = sin(animCounter / 8000) * 100;
-  }
-}
-
-function keyPressed() {
-  // pause the script!
-  if ( key == 'p' ) {
-    paused = !paused;
-    paused ? noLoop() : loop();
+    );
   }
 }
 
@@ -163,6 +168,7 @@ function initialTokenState() {
   if (typeof tokenState.flutterAdd === 'undefined') { tokenState.flutterAdd = 0; }
   if (typeof tokenState.divXSlide === 'undefined') { tokenState.divXSlide = 0; }
   if (typeof tokenState.flattenAng === 'undefined') { tokenState.flattenAng = 0; }
+  if (typeof tokenState.moving === 'undefined') { tokenState.moving = true; }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------
@@ -272,7 +278,6 @@ function drawLine(xpos1, xpos2, ypos1, ypos2, slantAdd, ySlantTweak, curveCh, xS
     cpy1 = (random(ypos1 + ((yEnd - yStart) / 20), ypos1) - ySlantTweak + random(fltTwk / 2)) + ((yEnd - yStart) / 20),
     cpx2 = (random(currCutX + ((xEnd - xStart) / 20), currCutX) + random(fltTwk)) - ((xEnd - xStart) / 40),
     cpy2 = (random(ypos2 + ((yEnd - yStart) / 20), ypos2)) - ((yEnd - yStart) / 20);
-    // console.log('cpy1:', cpy1);
   }
 
   if (lineStyle === 'droopy' || lineStyle === 'pouring') {

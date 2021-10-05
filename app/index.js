@@ -4,8 +4,13 @@
 //-----------------------------------------------------------------------------
 
 /**
- * Handle speed state change.
+ * Handle paused, flutter and line thickness state change.
  */
+
+const onChangeMoving = checked => {
+  tokenState.moving = checked;
+};
+
 const onChangeFlutterAdd = value => {
   tokenState.flutterAdd = parseInt(value);
 };
