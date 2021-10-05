@@ -74,8 +74,8 @@ function setup() {
   rotCh = parseInt(random(1, 10)) >= 9 ? true : false;                                // 2 in 10 chance to randomly rotate the canvas 
   divNum = parseInt(random(2, 10));                                                   // we can have between 2 - 10 color divisions
   chaosBGChance = random(1,10);                                                       // 2 in 10 chance of non-harmonious 'chaos' (any color!) background
-  bgCl = chaosBGChance < 8
-    ? changeColourPercentage(random(rdPal), random(0.25, 0.75))
+  bgCl = chaosBGChance < 8                                                            // define the bg color as either a dulled/lightened color in the pallette,
+    ? changeColourPercentage(random(rdPal), random(0.25, 0.75))                       // or a 'chaos' color
     : color(random(255), random(255), random(255));
   let slantAdd = 0;                                                                   // default 'slant' angle is endY pos of portal - startY pos of portal / 4,
   ySlantTweak = (pEndY - pStartY) / 4;                                                // there's a 50% chance this will get applied
@@ -108,16 +108,30 @@ function setup() {
   ]);
 
   // write out our metadata!
-  metadata.portalData = portals;
-  metadata.pallette = rdPal;
-  metadata.bg = bgCl;
-  metadata.bgStyle = chaosBGChance < 8 ? "harmonious" : "chaos";
-  metadata.dvs = portals[0][6].length;
-  metadata.barStyle = slantAdd > 0 ? 'lifted' : 'flat'
-  metadata.strokeWeight = stStrWght;
-  metadata.rotation = rotCh ? 'ascending' : 'regular';
-  metadata.lineStyle = curveCh ? 'curved' : 'straight';
-  metadata.lifting = randomDOY.getDate() + '-' + randomDOY.getMonth();
+  metadata = [
+    {
+      trait_type: "Divisions",
+      value: portals[0][6].length
+    }, {
+      trait_type: "UncutStyle",
+      value: slantAdd > 0 ? 'Lifted' : 'Flat',
+    }, { 
+      trait_type: "BackgroundStyle",
+      value: chaosBGChance < 8 ? "Harmonious" : "Random",
+    }, {
+      trait_type: "InitialStrokeWeight",
+      value: stStrWght,
+    }, {
+      trait_type: "Rotation",
+      value: rotCh ? 'Ascending' : 'Normal',
+    }, {
+      trait_type: "LineStyle",
+      value: curveCh ? 'Curved' : 'Straight',
+    }, {
+      trait_type: "LiftingOn",
+      value: randomDOY.getDate() + '-' + randomDOY.getMonth(),
+    }
+  ];
   console.log(metadata);
   
   // place an initial portal, just in case script starts off non-animated
