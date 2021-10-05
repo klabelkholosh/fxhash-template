@@ -5,7 +5,7 @@
 // TODO: 
 // * Opensea-compatible metadata!
 // * Refactor as far as possible.. anything we don't need / can reuse as function?
-// * no kitchen sink - let's pair back to 'animated or not', and maybe flutter/linethickness.
+// * no kitchen sink - let's pair back to 'animated or not', and maybe flutter/linethickness - DONE
 // * try clean up pallettes a bit
 //-----------------------------------------------------------------------------
 // declaration block
