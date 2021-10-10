@@ -273,10 +273,10 @@ let pallettes = [
 const hashToTraits = hash => {
 
   // setup random fns
-  const [r, rn, ri] = mkRandom(hash);
-
+  const [r] = mkRandom(hash);
+  
   // randomimze the portal
-  // const rdPal = selectRandom(pallettes, r);                             // pick a random pallette
+  const rdPal = selectRandom(pallettes, r);                             // pick a random pallette
   /*
   const algoKey    = selectRandomDist(algoDist, r);
   const setup      = algoSetups[algoKey];
@@ -285,7 +285,7 @@ const hashToTraits = hash => {
   const length     = setup.length * rn(1, 1.1);
   const steps      = 360 + ri(1, 36);
   */
-
+// rdPal = 'pp';
   return {
     rdPal
   };

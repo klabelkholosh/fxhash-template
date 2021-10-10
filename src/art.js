@@ -64,13 +64,13 @@ function setup() {
   // in case tokenState not set, initialize it
   initialTokenState();
 
-  // grab hash from tokenData and use it to create a p5js randomSeed
-  // any random() call after this is always deterministic to the supplied seed!
+  // grab hash from tokenData
   hash = tokenData.hash;
-  
-  const {
+  console.log('hash: ', hash);
+  let {
+    seed,
     rdPal
-  } = hashToTraits(hash);
+  } = hashToTraits(tokenData.hash);
 
   console.log('pallete found was: ', rdPal);
   //seed = parseInt(hash.slice(0, 16), 16)
