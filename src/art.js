@@ -2,14 +2,6 @@
 // art.js - art generation
 //-----------------------------------------------------------------------------
 
-// TODO: 
-// 1) move all global variables to tokenState in boot.js (things such as most static stuff in my setup() function, ie. canvas dimensions etc.?) 
-//      yeah for 1) you can just attach your globals onto that object in setup
-//      you don'ty need to add the in boot
-//      tokenState global will always exist so you can piggy back on it
-//       
-//      - shouldn't need initialTokenState as that will always exist, for token without state we'll load the default from the contract,  this should come from the boot.js file
-
 //-----------------------------------------------------------------------------
 // functions
 //-----------------------------------------------------------------------------
@@ -27,12 +19,10 @@ function setup() {
     seed,
     rdPal,
     rotCh,
-    bgCl,
     slantAdd,
     ySlantTweak,
     stStrWght,
     curveCh,
-    randomDOY,
     divs,
     canvasWidth,
     canvasHeight,
