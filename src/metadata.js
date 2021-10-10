@@ -5,10 +5,15 @@
 
 const hashToMetadata = (hash, state) => {
 
-  const {
+  let {
     seed,
-    shape,
-    color
+    rotCh,
+    divNum,
+    chaosBGChance,
+    slantAdd,
+    stStrWght,
+    curveCh,
+    randomDOY
   } = hashToTraits(hash);
 
   //
@@ -20,14 +25,26 @@ const hashToMetadata = (hash, state) => {
   //
 
   return [{
-      trait_type: "Shape",
-      value: shape
-    }, {
-      trait_type: "Color",
-      value: color,
-    }, { 
-      trait_type: "Line Width",
-      value: state.width
+    trait_type: "Divisions",
+    value: divNum
+  }, {
+    trait_type: "UncutStyle",
+    value: slantAdd > 0 ? 'Lifted' : 'Flat',
+  }, { 
+    trait_type: "BackgroundStyle",
+    value: chaosBGChance < 8 ? "Harmonious" : "Random",
+  }, {
+    trait_type: "InitialStrokeWeight",
+    value: stStrWght,
+  }, {
+    trait_type: "Rotation",
+    value: rotCh ? 'Ascending' : 'Normal',
+  }, {
+    trait_type: "LineStyle",
+    value: curveCh ? 'Curved' : 'Straight',
+  }, {
+    trait_type: "LiftingOn",
+    value: randomDOY.getDate() + '-' + randomDOY.getMonth(),
   }];
 
 };

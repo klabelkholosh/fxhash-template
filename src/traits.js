@@ -47,39 +47,27 @@ const randomDecimal = xss => () => {
 
 //-----------------------------------------------------------------------------
 
-/**
- * Returns a float between a and b.
- */
 const randomNumber = r => (a, b) => a + (b - a) * r();
 
 //-----------------------------------------------------------------------------
 
-/**
- * Returns an int between a and b.
- */
 const randomInt = rn => (a, b) => Math.floor(rn(a, b + 1));
 
 //-----------------------------------------------------------------------------
 
-/**
- * Seeds the randomization functions.
- */
 const mkRandom = hash => {
   const s  = Array(4).fill()
     .map((_,i) => i * 16 + 2)
     .map(idx => u64(`0x${hash.slice(idx, idx + 16)}`));
   const xss = xoshiro256strstr(s);
-  const r   = randomDecimal(xss);
-  const rn  = randomNumber(r);
-  const ri  = randomInt(rn);
-  return {r, rn, ri};
+  const r  = randomDecimal(xss);
+  const rn = randomNumber(r);
+  const ri = randomInt(rn);
+  return [r, rn, ri];
 };
 
 //-----------------------------------------------------------------------------
 
-/**
- * Randomly shuffle and array of element.
- */
 const shuffle = (array, r) => {
   let m = array.length, t, i;
 
@@ -95,73 +83,107 @@ const shuffle = (array, r) => {
 
 //-----------------------------------------------------------------------------
 
-/**
- * Return an array of size n filled with item.
- */
 const repeat = (item, n) => Array.from({length:n}).map(_ => item);
 
 //-----------------------------------------------------------------------------
 
-/**
- * Returns a random element from the array.
- */
 const selectRandom = (array, r) => array[Math.floor(r() * array.length)];
 
 //-----------------------------------------------------------------------------
 
-/**
- * Randomly select a key from a distribution map of values.
- *
- *  DistMap should be of the form:
- *
- *    const distMap = {
- *      banana .4,
- *      apple: .3,
- *      pear:  .2,
- *      kiwi:  .1
- *    };
- *
- *   The values should add up to 1 (won't fail if it doesn't but selection will
- *     be off from what you expect).  The above should return a distribution of
- *     40% bananas, 30% apples, 20% pears, 10% kiwis.
- *
- */
-const selectRandomDist = (distMap, r) => {
-  const keys = Object.keys(distMap)
-    .reduce((a, k) => a.concat(repeat(k, distMap[k] * 100)), []);
-  return selectRandom(shuffle(keys, r), r);
+const getPallet = (pallettes, r) => {
+  return selectRandom(pallettes, r);
 };
 
 //-----------------------------------------------------------------------------
 
-/**
- * Convert from int to padded hex (for colors).
- */
-const toHex   = x => x.toString(16).padStart(2, '0');
-const fromHex = hex => parseInt(hex, 16);
+// dulls / intensifies a colour by changing its percentage. Wow!
+function changeColourPercentage(colour, percentage) {
+  if(typeof colour !== 'undefined'){
+    
+    let c = colour.substring(1);      // strip #
+    let rgb = parseInt(c, 16);              // convert rrggbb to decimal
+    let r = ((rgb >> 16) & 0xff) * percentage;             // extract red and change percentage
+    let g = ((rgb >>  8) & 0xff) * percentage;             // extract green
+    let b = ((rgb >>  0) & 0xff) * percentage;             // extract blue
+    return color(r,g,b);
+  } else {
+    return colour;
+  } 
+}
 
 //-----------------------------------------------------------------------------
 
-const randomColorHex = r => {
-  const rc    = () => toHex(Math.floor(r() * 256));
-  const red   = rc();
-  const green = rc();
-  const blue  = rc();
-  return `#${red}${green}${blue}`;
-};
+// on setup, get a random date (deterministic from seed)
+function randomDate(start, end, rn) {
+  return new Date(start.getTime() + rn * (end.getTime() - start.getTime()));
+}
 
 //-----------------------------------------------------------------------------
-// traits
+
+// define the division data that will be used to generate the portal
+function createDvs(rdPal, lineLayers, pStartX, pEndX, divNum, ri, rn, r) {
+  let dvs = [];
+  let runningCut = parseInt(lineLayers / divNum);
+  let pi = 0;
+  let cutXRandomChance = 0;
+  let tempColor = '#000000';
+
+  for (let i = 0; i < divNum; i++) {
+    cutXRandomChance = ri(1, 10);
+    
+    // ensure we cycle through pallette colours, rather than running out if undefined
+    if (typeof rdPal[`${i + 1}`] === 'undefined'){
+      tempColor = rdPal[`${pi}`];
+      pi++;
+      if ((pi + 1) > rdPal.length) { pi = 0; } // reset pi when at end of pallette to keep looping
+    } else {
+      tempColor = rdPal[`${i + 1}`];
+    }
+
+    // determine whether we randomly add a cutX
+    if (cutXRandomChance > 4) {
+      cutX = rn((pStartX + 10), (pEndX - 10));
+      colorX = selectRandom(rdPal, r);
+      if(ri(1, 10) <= 8){
+          cutXstyle = null; //none
+      } else {
+        if(ri(1, 10) <= 5){
+          cutXstyle = "droopy"; //droopy
+        } else {
+          cutXstyle = "pouring"; //pouring
+        }
+      }
+    } else {
+      cutX = null;
+      colorX = null;
+      cutXstyle = null;
+    }
+    
+    let tempObj = {
+      cutY: runningCut,
+      color: tempColor,
+      cutX: cutX,
+      colorX: colorX,
+      cutXstyle: cutXstyle
+    };
+
+    // push to end of array
+    dvs.push(tempObj);
+
+    // update string .. if 1 before end, replace with just total number of line layers
+    runningCut = runningCut + parseInt(lineLayers / divNum);
+  }
+    
+  // make sure last element is set to total lineLayers to fix occasional bug
+  dvs[divNum - 1].cutY = lineLayers;
+
+  return dvs;
+}
+
 //-----------------------------------------------------------------------------
-
-//- distributions -------------------------------------------------------------
-
-const shapeDist = {
-  square: .6,
-  circle: .4
-};
-
-//- pallettes -----------------------------------------------------------------
+// pallettes
+//-----------------------------------------------------------------------------
 
 let pallettes = [
   ["#d9ceb2","#948c75","#d5ded9","#7a6a53","#99b2b7"],
@@ -273,23 +295,57 @@ let pallettes = [
 const hashToTraits = hash => {
 
   // setup random fns
-  const [r] = mkRandom(hash);
-  
-  // randomimze the portal
-  const rdPal = selectRandom(pallettes, r);                             // pick a random pallette
-  /*
-  const algoKey    = selectRandomDist(algoDist, r);
-  const setup      = algoSetups[algoKey];
-  const thetaStart = ri(...setup.theta.start);
-  const thetaMax   = ri(...setup.theta.max);
-  const length     = setup.length * rn(1, 1.1);
-  const steps      = 360 + ri(1, 36);
-  */
-// rdPal = 'pp';
+  const [r, rn, ri] = mkRandom(hash);
+
+  // size / dimension consts
+  const canvasWidth   = window.innerHeight;
+  const canvasHeight  = window.innerHeight;
+  const pStartX       = canvasWidth * 0.25;     
+  const pEndX         = canvasWidth * 0.75;      
+  const pStartY       = canvasHeight * 0.25;    
+  const pEndY         = canvasHeight * 0.75;
+
+  // random consts
+  const rdPal = getPallet(pallettes, r);                                                    // pick a random color pallette
+  const rotCh = ri(1, 10) >= 9 ? true : false;                                              // 2 in 10 chance to randomly rotate the canvas 
+  const divNum = ri(2, 10);                                                                 // we can have between 2 - 10 color divisions
+  const chaosBGChance = ri(1,10);                                                           // 2 in 10 chance of non-harmonious 'chaos' (any color!) background              
+  const bgCl = chaosBGChance < 9                                                            
+    ? changeColourPercentage(selectRandom(rdPal, r), rn(0.25, 0.75))                        // define the bg color as either a dulled/lightened color in the pallette,
+    : color(ri(0, 255), ri(0, 255), ri(0, 255));                                            // or a 'chaos' color
+  const slantChance = ri(1,10);
+  let slantAdd = 0;                                                                         // default 'slant' angle is endY pos of portal - startY pos of portal / 4,
+  const ySlantTweak = (pEndY - pStartY) / 4;                                                
+  if(slantChance > 5) {                                                                     // there's a 50% chance this will get applied
+    slantAdd = ySlantTweak;
+  }
+  const stStrWght = parseInt(ri(2,3));                                                      // the line weight of each strand can be between 2 (stringy) - 3 (solid)
+  const curveCh = parseInt(ri(1, 10)) >= 9 ? true : false;                                  // 2 in 10 chance of sweeping bezier curves for some divisions
+  const randomDOY = randomDate(new Date(2012, 0, 1), new Date(), rn(0,1));                  // on a random day/month of the year, the script will slide-animate for the entire day.
+  const divs = createDvs(rdPal, (pEndY - pStartY), pStartX, pEndX, divNum, ri, rn, r);      // divisions config const
+
+  // adding to tokenState, to help in draw function in art.js
+  tokenState.bgCl = bgCl;
+  tokenState.randomDOY = randomDOY;
+
   return {
-    rdPal
+    rdPal,
+    rotCh,
+    divNum,
+    chaosBGChance,
+    bgCl,
+    slantAdd,
+    ySlantTweak,
+    stStrWght,
+    curveCh,
+    randomDOY,
+    divs,
+    canvasWidth,
+    canvasHeight,
+    pStartX,
+    pEndX,
+    pStartY,
+    pEndY
   };
 
 };
-
-

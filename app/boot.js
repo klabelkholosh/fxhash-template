@@ -27,5 +27,12 @@ const tokenData = {
 //-----------------------------------------------------------------------------
 
 const tokenState = {
-  width: 5
+  width: 5,
+  lineThickness: 0,
+  flutterAdd: 0,
+  divXSlide: 0,
+  flattenAng: 0,
+  moving: true,
+  animCounter: 0,
+  portals: []
 };
