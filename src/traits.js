@@ -285,7 +285,8 @@ let pallettes = [
   ["#d1313d","#e5625c","#f9bf76","#8eb2c5","#615375"],
   ["#ffe181","#eee9e5","#fad3b2","#ffba7f","#ff9c97"],
   ["#73c8a9","#dee1b6","#e1b866","#bd5532","#373b44"],
-  ["#805841","#dcf7f3","#fffcdd","#ffd8d8","#f5a2a2"]
+  ["#805841","#dcf7f3","#fffcdd","#ffd8d8","#f5a2a2"],
+  ["#EBEBEB","#786666","#8C8B8B","#666161","#0D0202"]
 ];
 
 //-----------------------------------------------------------------------------
@@ -311,7 +312,7 @@ const hashToTraits = hash => {
   const divNum = ri(2, 10);                                                                 // we can have between 2 - 10 color divisions
   const chaosBGChance = ri(1,10);                                                           // 2 in 10 chance of non-harmonious 'chaos' (any color!) background              
   const bgCl = chaosBGChance < 9                                                            
-    ? changeColourPercentage(selectRandom(rdPal, r), rn(0.25, 0.75))                        // define the bg color as either a dulled/lightened color in the pallette,
+    ? changeColourPercentage(selectRandom(rdPal, r), rn(0.45, 0.75))                        // define the bg color as either a dulled/lightened color in the pallette,
     : color(ri(0, 255), ri(0, 255), ri(0, 255));                                            // or a 'chaos' color
   const slantChance = ri(1,10);
   let slantAdd = 0;                                                                         // default 'slant' angle is endY pos of portal - startY pos of portal / 4,
