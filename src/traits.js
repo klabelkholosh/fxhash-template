@@ -328,10 +328,10 @@ const hashToTraits = hash => {
   // adding to tokenState, to help in draw function in art.js
   tokenState.bgCl = bgCl;
   tokenState.randomDOY = randomDOY;
+  tokenState.rotCh = rotCh;
 
   return {
     rdPal,
-    rotCh,
     divNum,
     chaosBGChance,
     bgCl,

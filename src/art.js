@@ -5,20 +5,14 @@
 //-----------------------------------------------------------------------------
 // functions
 //-----------------------------------------------------------------------------
-
-/**
- * Example of setting up a canvas with p5.js.
- */
 function setup() {
 
   // grab hash from tokenData
   hash = tokenData.hash;
-  // hash = '0x370918f5dfe4aaba7962fc1f2df1de1bd1879a0fd9fdc574ad8ec90e2743cb20';
 
   let {
     seed,
     rdPal,
-    rotCh,
     slantAdd,
     ySlantTweak,
     stStrWght,
@@ -38,9 +32,6 @@ function setup() {
   // create canvas
   canvas = createCanvas(canvasWidth, canvasHeight);
 
-  // perhaps rotate it
-  if (rotCh) { canvas.style(`transform: rotate(270deg)`); }
-
   // push defined portal to array
   tokenState.portals.push([
     0.1, 
@@ -57,6 +48,12 @@ function setup() {
     rdPal
   ]);
   
+  // rotate if we need to
+  if(tokenState.rotCh) {
+    translate(innerWidth/ 50, innerHeight/ 1.015);
+    rotate(-1.575);
+  }
+
   // place an initial portal, just in case script starts off non-animated
   placePortal();
 
@@ -73,8 +70,15 @@ function draw() {
   // only animate if moving is true
   if (tokenState.moving) {
     
-    placePortal();
+    // rotate if we need to
+    if(tokenState.rotCh) {
+      translate(innerWidth/ 50, innerHeight/ 1.015);
+      rotate(-1.575);
+    }
 
+    // draw the portal
+    placePortal();
+    
     // if a particular day and month, slowly animate the script further for the entire day.
     if ((new Date().getDate() === tokenState.randomDOY.getDate()) && (new Date().getMonth() === tokenState.randomDOY.getMonth())) {
       tokenState.animCounter = tokenState.animCounter + 100;
@@ -220,7 +224,7 @@ function drawLine(xpos1, xpos2, ypos1, ypos2, slantAdd, ySlantTweak, curveCh, xS
             cpy1, 
             cpx2, 
             cpy2, 
-            tempXPos2, 
+            tempXPos2,
             ypos2
         );
   } else {
