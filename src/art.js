@@ -80,10 +80,11 @@ function draw() {
     placePortal();
     
     // if a particular day and month, slowly animate the script further for the entire day.
-    if ((new Date().getDate() === tokenState.randomDOY.getDate()) && (new Date().getMonth() === tokenState.randomDOY.getMonth())) {
+    if ((new Date().getDate() === tokenState.rndDy.getDate()) && (new Date().getMonth() === tokenState.rndDy.getMonth())) {
+      let sgma = sin(tokenState.anmC / 8000) * 100
       tokenState.anmC = tokenState.anmC + 100;
-      tokenState.divXSlide = sin(tokenState.anmC / 8000) * 100;
-      tokenState.fltA = sin(tokenState.anmC / 8000) * 100;
+      tokenState.divXSlide = sgma;
+      tokenState.fltA = sgma;
     }
   }
   

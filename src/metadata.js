@@ -13,7 +13,7 @@ const hashToMetadata = (hash, state) => {
     slantAdd,
     stWt,
     curveCh,
-    randomDOY
+    rndDy
   } = hashToTraits(hash);
 
   //
@@ -44,7 +44,7 @@ const hashToMetadata = (hash, state) => {
     value: curveCh ? 'Curved' : 'Straight',
   }, {
     trait_type: "LiftingOn",
-    value: randomDOY.getDate() + '-' + randomDOY.getMonth(),
+    value: rndDy.getDate() + '-' + rndDy.getMonth(),
   }];
 
 };

@@ -223,12 +223,12 @@ const hashToTraits = hash => {
   }
   const stWt = parseInt(ri(2,3));                                                      // the line weight of each strand can be between 2 (stringy) - 3 (solid)
   const curveCh = parseInt(ri(1, 10)) >= 9 ? true : false;                                  // 2 in 10 chance of sweeping bezier curves for some divisions
-  const randomDOY = randomDate(new Date(2012, 0, 1), new Date(), rn(0,1));                  // on a random day/month of the year, the script will slide-animate for the entire day.
+  const rndDy = randomDate(new Date(2012, 0, 1), new Date(), rn(0,1));                  // on a random day/month of the year, the script will slide-animate for the entire day.
   const divs = createDvs(rdPal, (pEndY - pStartY), pStartX, pEndX, divNum, ri, rn, r);      // divisions config const
 
   // adding to tokenState, to help in draw function in art.js
   tokenState.bgCl = bgCl;
-  tokenState.randomDOY = randomDOY;
+  tokenState.rndDy = rndDy;
   tokenState.rotCh = rotCh;
 
   return {
@@ -240,7 +240,7 @@ const hashToTraits = hash => {
     ySlantTweak,
     stWt,
     curveCh,
-    randomDOY,
+    rndDy,
     divs,
     canvasWidth,
     canvasHeight,
