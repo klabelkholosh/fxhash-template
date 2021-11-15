@@ -289,6 +289,10 @@ let pallettes = [
   ["#EBEBEB","#786666","#8C8B8B","#666161","#0D0202"]
 ];
 
+function teenyizePalette(b,c){
+  return++c?(("0x"+b)/17+.5|0).toString(16):b.replace(/../g,teenyizePalette);
+}
+
 //-----------------------------------------------------------------------------
 // main
 //-----------------------------------------------------------------------------
@@ -308,6 +312,10 @@ const hashToTraits = hash => {
 
   // random consts
   const rdPal = getPallet(pallettes, r);                                                    // pick a random color pallette
+  let palNew = rdPal.map(p => {
+   return teenyizePalette(p)
+  });
+  console.log(palNew);
   const rotCh = ri(1, 10) >= 9 ? true : false;                                              // 2 in 10 chance to randomly rotate the canvas 
   const divNum = ri(2, 10);                                                                 // we can have between 2 - 10 color divisions
   const chaosBGChance = ri(1,10);                                                           // 2 in 10 chance of non-harmonious 'chaos' (any color!) background              
@@ -350,3 +358,4 @@ const hashToTraits = hash => {
   };
 
 };
+

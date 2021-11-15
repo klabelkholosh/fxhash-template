@@ -80,11 +80,11 @@ function draw() {
     placePortal();
     
     // if a particular day and month, slowly animate the script further for the entire day.
-    if ((new Date().getDate() === tokenState.randomDOY.getDate()) && (new Date().getMonth() === tokenState.randomDOY.getMonth())) {
+    //if ((new Date().getDate() === tokenState.randomDOY.getDate()) && (new Date().getMonth() === tokenState.randomDOY.getMonth())) {
       tokenState.animCounter = tokenState.animCounter + 100;
       tokenState.divXSlide = sin(tokenState.animCounter / 8000) * 100;
       tokenState.flattenAng = sin(tokenState.animCounter / 8000) * 100;
-    }
+    //}
   }
   
 }
