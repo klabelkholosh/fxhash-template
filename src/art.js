@@ -84,7 +84,7 @@ function draw() {
       let sgma = sin(tokenState.anmC / 8000) * 100
       tokenState.anmC = tokenState.anmC + 100;
       tokenState.divXSlide = sgma;
-      tokenState.fltA = sgma;
+      tokenState.flatA = sgma;
     }
   }
   
@@ -93,7 +93,7 @@ function draw() {
 // define our canvas bg and draw a portal.. pulled out of draw() function so that setup() can call this initially for non-animated states
 function placePortal() {
   background(tokenState.bgCl);                                           // set bg color
-  tokenState.fltTwk = 10 + tokenState.fltA;                              // default flutter tweak is 10, plus/minus user setting
+  tokenState.fltTwk = 10 + tokenState.flutA;                             // default flutter tweak is 10, plus/minus user setting
   noFill();
 
   // for as many portals as are defined (always 1, currently), draw it!
@@ -138,10 +138,10 @@ function drawPortal(heightPos, heightPosIncr, xStart, xEnd, yStart, yEnd, sentDi
         cutXStyle = dvs.find((el) => i < el.cutY).cutXstyle;
         if(cutXStyle !== null) {
           ltXtw = (xEnd - xStart) / 16;
-          drawLine(xpos1, xpos2, ypos1, ypos2, 0, ySlantTweak + tokenState.fltA, false, xStart, xEnd, yStart, yEnd, cutXStyle, i, dvs);
+          drawLine(xpos1, xpos2, ypos1, ypos2, 0, ySlantTweak + tokenState.flatA, false, xStart, xEnd, yStart, yEnd, cutXStyle, i, dvs);
         } else {
           ltXtw = 0;
-          drawCutXLine(dvs, xpos1, ypos1, ypos2, i, ySlantTweak + tokenState.fltA, xpos2);
+          drawCutXLine(dvs, xpos1, ypos1, ypos2, i, ySlantTweak + tokenState.flatA, xpos2);
         }
 
         // ensure we're not going over the right-most X bound
@@ -149,7 +149,7 @@ function drawPortal(heightPos, heightPosIncr, xStart, xEnd, yStart, yEnd, sentDi
         tempXPos2 =  tempLen > xpos2 ? xpos2 :  tempLen < xpos1 ? xpos1 : tempLen;
 
         // draw shadow line for above
-        if (ySlantTweak + tokenState.fltA > 0) {
+        if (ySlantTweak + tokenState.flatA > 0) {
           drawLine(xpos1, tempXPos2, ypos1, ypos2, 0, 0, curveCh, xStart, xEnd, yStart, yEnd, "1", null, null, rdPal);
         }
 
@@ -158,10 +158,10 @@ function drawPortal(heightPos, heightPosIncr, xStart, xEnd, yStart, yEnd, sentDi
         drawLine(tempXPos2, xpos2, ypos1, ypos2, 0, 0, false);
           
       } else {
-        drawLine(xpos1, xpos2, ypos1, ypos2, slantAdd + tokenState.fltA, 0, curveCh, xStart, xEnd, yStart, yEnd, "uncut");
+        drawLine(xpos1, xpos2, ypos1, ypos2, slantAdd + tokenState.flatA, 0, curveCh, xStart, xEnd, yStart, yEnd, "uncut");
 
         // shadow line, if we're slanted
-        if (slantAdd + tokenState.fltA > 0) {
+        if (slantAdd + tokenState.flatA > 0) {
           drawLine(xpos1, xpos2, ypos1, ypos2, 0, 0, false, xStart, xEnd, yStart, yEnd, "2", null, null, rdPal);
         }
       

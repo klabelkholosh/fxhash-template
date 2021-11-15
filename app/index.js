@@ -11,8 +11,8 @@ const onChangeMoving = checked => {
   tokenState.moving = checked;
 };
 
-const onChangeFltA = value => {
-  tokenState.fltA = parseInt(value);
+const onChangeFlutA = value => {
+  tokenState.flutA = parseInt(value);
 };
 
 const onChangeLnThk = value => {

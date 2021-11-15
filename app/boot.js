@@ -25,13 +25,13 @@ const tokenData = {
 };
 
 //-----------------------------------------------------------------------------
-// fltA = flattenAngle, lnThk = lineThickness, fltA = flutterAdd
+// flatA = flattenAngle, lnThk = lineThickness, flutA = flutterAdd
 const tokenState = {
   width: 5,
   lnThk: 0,
-  fltA: 0,
+  flutA: 0,
   divXSlide: 0,
-  fltA: 0,
+  flatA: 0,
   moving: true,
   anmC: 0,
   portals: []
