@@ -152,7 +152,7 @@ function drawPortal(heightPos, heightPosIncr, xStart, xEnd, yStart, yEnd, sentDi
 
         // draw shadow line for above
         if (ySlantTweak + tokenState.flattenAng > 0) {
-          drawLine(xpos1, tempXPos2, ypos1, ypos2, 0, 0, curveCh, xStart, xEnd, yStart, yEnd, "shadow_dark", null, null, rdPal);
+          drawLine(xpos1, tempXPos2, ypos1, ypos2, 0, 0, curveCh, xStart, xEnd, yStart, yEnd, "1", null, null, rdPal);
         }
 
         // draw the rest of the divided line, using cutX's colour..
@@ -164,7 +164,7 @@ function drawPortal(heightPos, heightPosIncr, xStart, xEnd, yStart, yEnd, sentDi
 
         // shadow line, if we're slanted
         if (slantAdd + tokenState.flattenAng > 0) {
-          drawLine(xpos1, xpos2, ypos1, ypos2, 0, 0, false, xStart, xEnd, yStart, yEnd, "shadow_light", null, null, rdPal);
+          drawLine(xpos1, xpos2, ypos1, ypos2, 0, 0, false, xStart, xEnd, yStart, yEnd, "2", null, null, rdPal);
         }
       
       }
@@ -190,29 +190,26 @@ function drawLine(xpos1, xpos2, ypos1, ypos2, slantAdd, ySlantTweak, curveCh, xS
     cpy1,
     cpx2,
     cpy2,
-    currCutX;
+    currCutX = lineStyle === "3" || lineStyle === "4" ? dvs.find((el) => counter < el.cutY).cutX : null,
+    bz1 = (random(xpos1 + ((xEnd - xStart) / 20), xpos1))  + ((xEnd - xStart) / 4),
+    bz2 = random(ypos1 + ((yEnd - yStart) / 20), ypos1),
+    bz3 = random(currCutX + ((xEnd - xStart) / 20), currCutX) + random(tokenState.fltTwk),
+    bz4 = (random(ypos2 + ((yEnd - yStart) / 20), ypos2)) - ((yEnd - yStart) / 20);
 
-  if (lineStyle === 'shadow_dark') {
-    stroke(changeColourPercentage(random(rdPal), random(0.1, 0.4)));
-  } else if (lineStyle === 'shadow_light') {
-    stroke(changeColourPercentage(random(rdPal), random(0.5, 0.75)));
-  } else if (lineStyle === 'droopy') {
-    currCutX = dvs.find((el) => counter < el.cutY).cutX;
-    // bezier curve points 
-    cpx1 = (random(xpos1 + ((xEnd - xStart) / 20), xpos1)) + ((xEnd - xStart) / 4), 
-    cpy1 = (random(ypos1 + ((yEnd - yStart) / 20), ypos1) + random(tokenState.fltTwk / 2)), 
-    cpx2 = (random(currCutX + ((xEnd - xStart) / 20), currCutX) + random(tokenState.fltTwk)),  
-    cpy2 = (random(ypos2 + ((yEnd - yStart) / 20), ypos2)) - ((yEnd - yStart) / 20);
-  } else if (lineStyle === 'pouring') {
-    currCutX = dvs.find((el) => counter < el.cutY).cutX;
-    // bezier curve points
-    cpx1 = (random(xpos1 + ((xEnd - xStart) / 20), xpos1)) + ((xEnd - xStart) / 4),
-    cpy1 = (random(ypos1 + ((yEnd - yStart) / 20), ypos1) - ySlantTweak + random(tokenState.fltTwk / 2)) + ((yEnd - yStart) / 20),
-    cpx2 = (random(currCutX + ((xEnd - xStart) / 20), currCutX) + random(tokenState.fltTwk)) - ((xEnd - xStart) / 40),
-    cpy2 = (random(ypos2 + ((yEnd - yStart) / 20), ypos2)) - ((yEnd - yStart) / 20);
-  }
+    if (lineStyle === "1") { // shadow dark
+      stroke(changeCC(random(rdPal), random(0.1, 0.4)));
+    } else if (lineStyle === "2") { //shadow_light
+      stroke(changeCC(random(rdPal), random(0.5, 0.75)));
+    } else if (lineStyle === "3" || lineStyle === "4") { // droopy or pouring
+     
+      // bezier curve points 
+      cpx1 = bz1; 
+      cpy1 = lineStyle === "3" ? (bz2 + random(tokenState.fltTwk / 2)) : (bz2 - ySlantTweak + random(tokenState.fltTwk / 2)) + ((yEnd - yStart) / 20); 
+      cpx2 = lineStyle === "3" ? bz3 : (bz3) - ((xEnd - xStart) / 40);  
+      cpy2 = bz4;
+    }
 
-  if (lineStyle === 'droopy' || lineStyle === 'pouring') {
+  if (lineStyle === "3" || lineStyle === "4") {
         // ensure we don't go over the right-hand width
         tempLen = currCutX + random(tokenState.fltTwk) + ((xEnd - xStart) / 20) + tokenState.divXSlide;
         tempXPos2 =  tempLen > xpos2 ? xpos2 :  tempLen < xpos1 ? xpos1 : tempLen;
