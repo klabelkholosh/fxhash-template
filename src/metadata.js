@@ -9,9 +9,9 @@ const hashToMetadata = (hash, state) => {
     seed,
     rotCh,
     divNum,
-    chaosBGChance,
+    chBGc,
     slantAdd,
-    stStrWght,
+    stWt,
     curveCh,
     randomDOY
   } = hashToTraits(hash);
@@ -32,10 +32,10 @@ const hashToMetadata = (hash, state) => {
     value: slantAdd > 0 ? 'Lifted' : 'Flat',
   }, { 
     trait_type: "BackgroundStyle",
-    value: chaosBGChance < 8 ? "Harmonious" : "Random",
+    value: chBGc < 8 ? "Harmonious" : "Random",
   }, {
     trait_type: "InitialStrokeWeight",
-    value: stStrWght,
+    value: stWt,
   }, {
     trait_type: "Rotation",
     value: rotCh ? 'Ascending' : 'Normal',

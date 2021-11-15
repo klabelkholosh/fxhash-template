@@ -11,10 +11,10 @@ const onChangeMoving = checked => {
   tokenState.moving = checked;
 };
 
-const onChangeFlutterAdd = value => {
-  tokenState.flutterAdd = parseInt(value);
+const onChangeFltA = value => {
+  tokenState.fltA = parseInt(value);
 };
 
-const onChangeLineThickness = value => {
-  tokenState.lineThickness = parseInt(value);
+const onChangeLnThk = value => {
+  tokenState.lnThk = parseInt(value);
 };

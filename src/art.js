@@ -15,7 +15,7 @@ function setup() {
     rdPal,
     slantAdd,
     ySlantTweak,
-    stStrWght,
+    stWt,
     curveCh,
     divs,
     canvasWidth,
@@ -43,7 +43,7 @@ function setup() {
     divs,
     ySlantTweak, 
     slantAdd, 
-    stStrWght,
+    stWt,
     curveCh,
     rdPal
   ]);
@@ -80,11 +80,11 @@ function draw() {
     placePortal();
     
     // if a particular day and month, slowly animate the script further for the entire day.
-    //if ((new Date().getDate() === tokenState.randomDOY.getDate()) && (new Date().getMonth() === tokenState.randomDOY.getMonth())) {
-      tokenState.animCounter = tokenState.animCounter + 100;
-      tokenState.divXSlide = sin(tokenState.animCounter / 8000) * 100;
-      tokenState.flattenAng = sin(tokenState.animCounter / 8000) * 100;
-    //}
+    if ((new Date().getDate() === tokenState.randomDOY.getDate()) && (new Date().getMonth() === tokenState.randomDOY.getMonth())) {
+      tokenState.anmC = tokenState.anmC + 100;
+      tokenState.divXSlide = sin(tokenState.anmC / 8000) * 100;
+      tokenState.fltA = sin(tokenState.anmC / 8000) * 100;
+    }
   }
   
 }
@@ -92,22 +92,18 @@ function draw() {
 // define our canvas bg and draw a portal.. pulled out of draw() function so that setup() can call this initially for non-animated states
 function placePortal() {
   background(tokenState.bgCl);                                           // set bg color
-  tokenState.fltTwk = 10 + tokenState.flutterAdd;                        // default flutter tweak is 10, plus/minus user setting
+  tokenState.fltTwk = 10 + tokenState.fltA;                              // default flutter tweak is 10, plus/minus user setting
   noFill();
 
   // for as many portals as are defined (always 1, currently), draw it!
-  for(let p = 0; p < tokenState.portals.length; p++) {
-    drawPortal(
-        ...tokenState.portals[p]
-    );
-  }
+  drawPortal(...tokenState.portals[0]);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------
 // OUR MAIN FUNCTION THAT PULLS IT ALL TOGETHER AND DRAWS A DAMN PORTAL
 //-----------------------------------------------------------------------------------------------------------------------------------
 
-function drawPortal(heightPos, heightPosIncr, xStart, xEnd, yStart, yEnd, sentDiv, ySlantTweak, slantAdd, stStrWght, curveCh, rdPal) {
+function drawPortal(heightPos, heightPosIncr, xStart, xEnd, yStart, yEnd, sentDiv, ySlantTweak, slantAdd, stWt, curveCh, rdPal) {
 
   // how many string 'lines' we'll be drawing
   let lineLayers = yEnd - yStart;
@@ -119,13 +115,14 @@ function drawPortal(heightPos, heightPosIncr, xStart, xEnd, yStart, yEnd, sentDi
   for (let i = 0; i < lineLayers; i++) {
 
     // set a stroke weight
-    strokeWeight(stStrWght + tokenState.lineThickness);
+    strokeWeight(stWt + tokenState.lnThk);
 
     // define slightly random widths / line height starting positions, to create flutter effect
-    let xpos1 = xStart + random(tokenState.fltTwk);
-    let xpos2 = xEnd - random(tokenState.fltTwk);
-    let ypos1 = yStart + heightPos + random(tokenState.fltTwk / 2);
-    let ypos2 = yStart + heightPos + random(tokenState.fltTwk / 2);
+    let fT = random(tokenState.fltTwk);
+    let xpos1 = xStart + fT;
+    let xpos2 = xEnd - fT;
+    let ypos1 = yStart + heightPos + fT / 2;
+    let ypos2 = yStart + heightPos + fT / 2;
 
     // draw an interference line
     if (ypos1 < yEnd) { // this 'if' is what cuts it off at the bottom. maybe needs work... TODO
@@ -139,19 +136,19 @@ function drawPortal(heightPos, heightPosIncr, xStart, xEnd, yStart, yEnd, sentDi
         // draw either an angled cutX line, or a pouring/droopy one...
         cutXStyle = dvs.find((el) => i < el.cutY).cutXstyle;
         if(cutXStyle !== null) {
-          lineTypeXTweak = (xEnd - xStart) / 16;
-          drawLine(xpos1, xpos2, ypos1, ypos2, 0, ySlantTweak + tokenState.flattenAng, false, xStart, xEnd, yStart, yEnd, cutXStyle, i, dvs);
+          ltXtw = (xEnd - xStart) / 16;
+          drawLine(xpos1, xpos2, ypos1, ypos2, 0, ySlantTweak + tokenState.fltA, false, xStart, xEnd, yStart, yEnd, cutXStyle, i, dvs);
         } else {
-          lineTypeXTweak = 0;
-          drawCutXLine(dvs, xpos1, ypos1, ypos2, i, ySlantTweak + tokenState.flattenAng, xpos2);
+          ltXtw = 0;
+          drawCutXLine(dvs, xpos1, ypos1, ypos2, i, ySlantTweak + tokenState.fltA, xpos2);
         }
 
         // ensure we're not going over the right-most X bound
-        tempLen = dvs.find((el) => i < el.cutY).cutX + random(tokenState.fltTwk) + lineTypeXTweak + tokenState.divXSlide;
+        tempLen = dvs.find((el) => i < el.cutY).cutX + random(tokenState.fltTwk) + ltXtw + tokenState.divXSlide;
         tempXPos2 =  tempLen > xpos2 ? xpos2 :  tempLen < xpos1 ? xpos1 : tempLen;
 
         // draw shadow line for above
-        if (ySlantTweak + tokenState.flattenAng > 0) {
+        if (ySlantTweak + tokenState.fltA > 0) {
           drawLine(xpos1, tempXPos2, ypos1, ypos2, 0, 0, curveCh, xStart, xEnd, yStart, yEnd, "1", null, null, rdPal);
         }
 
@@ -160,10 +157,10 @@ function drawPortal(heightPos, heightPosIncr, xStart, xEnd, yStart, yEnd, sentDi
         drawLine(tempXPos2, xpos2, ypos1, ypos2, 0, 0, false);
           
       } else {
-        drawLine(xpos1, xpos2, ypos1, ypos2, slantAdd + tokenState.flattenAng, 0, curveCh, xStart, xEnd, yStart, yEnd, "uncut");
+        drawLine(xpos1, xpos2, ypos1, ypos2, slantAdd + tokenState.fltA, 0, curveCh, xStart, xEnd, yStart, yEnd, "uncut");
 
         // shadow line, if we're slanted
-        if (slantAdd + tokenState.flattenAng > 0) {
+        if (slantAdd + tokenState.fltA > 0) {
           drawLine(xpos1, xpos2, ypos1, ypos2, 0, 0, false, xStart, xEnd, yStart, yEnd, "2", null, null, rdPal);
         }
       
