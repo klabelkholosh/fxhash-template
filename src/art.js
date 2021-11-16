@@ -87,7 +87,7 @@ function placeLoom() {
   background(tokenState.bgCl);                                           // set bg color
   tokenState.fltTwk = 10 + tokenState.flutA;                             // default flutter tweak is 10, plus/minus user setting
   noFill();                                                              // no fills plz
-  drawLoom(...tokenState.loom[0]);                                  // draw the loom!
+  drawLoom(...tokenState.loom[0]);                                       // draw the loom!
 }
 
  // rotate if we need to
@@ -121,7 +121,7 @@ function drawLoom(htP, htPIncr, xSt, xEn, ySt, yEn, dvs, ySlT, slA, stWt, cvCh, 
     if (y1 < yEn) { // this 'if' is what cuts it off at the bottom. maybe needs work... TODO
 
       // grab a color from the found division
-      stroke(setColorY(i, dvs));
+      stroke(dvs.find((el) => i < el.cutY).color);
 
       // if there's an X cut, draw both colored lines, otherwise just solid line
       if(checkXDiv(i, dvs)) {
@@ -146,7 +146,7 @@ function drawLoom(htP, htPIncr, xSt, xEn, ySt, yEn, dvs, ySlT, slA, stWt, cvCh, 
         }
 
         // draw the rest of the divided line, using cutX's colour..
-        stroke(setColorX(i, dvs));
+        stroke(dvs.find((el) => i < el.cutY).colorX);
         drawLine(tX2, x2, y1, y2, 0, 0, false);
           
       } else {
@@ -254,28 +254,6 @@ function drawCutXLine(dvs, x1, y1, y2, ctr, ySlT, xEn) {
 //-----------------------------------------------------------------------------------------------------------------------------------
 // DIVISION-SPECIFIC FUNCTIONS
 //-----------------------------------------------------------------------------------------------------------------------------------
-
-// grab Y color from a division definition
-function setColorY(i, dvs) {
-  let foundCol = '#FFFFFF'
-
-  foundCol =
-    !('color' in dvs.find((el) => i < el.cutY)) ||
-    typeof dvs.find((el) => i < el.cutY).color === 'undefined'
-      ?  dvs[parseInt(random(0, (dvs.length < 4 ? dvs.length : 4)))].color
-      : dvs.find((el) => i < el.cutY).color;
-
-  return color(foundCol);
-}
-
-// grab X color from a division definition
-function setColorX(i, dvs) {
-  let foundCol = '#FFFFFF'
-  if (dvs.find((el) => i < el.cutY).cutX !== null) {
-    foundCol = dvs.find((el) => i < el.cutY).colorX;
-  }
-  return color(foundCol);
-}
 
 // check if there indeed is an X cut in a division
 function checkXDiv(i, dvs) {

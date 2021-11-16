@@ -98,10 +98,27 @@ const selectRandomDist = (distMap, r) => {
 };
 
 //-----------------------------------------------------------------------------
-const getPallet = (pallettes, r) => {
-  return String(selectRandom(pallettes, r)).match(/.{1,3}/g);
+
+const getPallet = (palletNum, r) => {
+  return String(selectRandom(p[palletNum].split("-"), r)).match(/.{1,3}/g);
 };
 
+const getPName = (pNum) => {
+  switch (pNum) {
+    case 6:
+      return "ixchel";
+    case 5:
+      return "warp";
+    case 4:
+      return "duraeuropa";
+    case 3:
+      return "starčevo";
+    case 2:
+      return "jacquard";
+    case 1:
+      return "geloma";
+  }
+}
 //-----------------------------------------------------------------------------
 
 // dulls / intensifies a colour by changing its percentage. Wow!
@@ -111,7 +128,7 @@ function changeCC(c, prc) {
       return it + it;
     }).join("");
   
-    let rgb = parseInt(sixCol, 16);                  // convert rrggbb to decimal
+    let rgb = parseInt(sixCol, 16);                 // convert rrggbb to decimal
     let r = ((rgb >> 16) & 0xff) * prc;             // extract red and change prc
     let g = ((rgb >>  8) & 0xff) * prc;             // extract green
     let b = ((rgb >>  0) & 0xff) * prc;             // extract blue
@@ -192,9 +209,58 @@ function createDvs(rdPal, lineLayers, stX, enX, divNum, ri, rn, r) {
 // pallettes
 //-----------------------------------------------------------------------------
 
-let pallettes = "dca987ddd7659ab-fffce6eed211ce6-efcdeb555323914-313445688ecac24-543f72cc4eea6b9-545888acbcdaeda-8216868a6bb5ec5-fc8f95e64e34388-f44efcce6debeee-fa9e78b68657357-ce5fff0005be2ad-2665948c2be0efe-643feb7bae71ea3-bbacb2e73e27333-423925d84eb5dfc-eeacb8665444333-eda4208baed9f20-2041351657b19c6-e45f83ee7ffb9cb-bdd688222433733-bb8cc8ed9eb8ea8-bc5ee8fb4e77a45-aa4eb3f53c13098-303404614b44e74-697101ba0cb8d35-abaccbeecedbeca-edb123f35eb4edb-a56ba9ccaedaeeb-674784bd6eed644-bdbcdbddbedbfdb-aecdebfcbfaaf89-444ffddb6533233-f342221771bbffc-c13e72cc0ffb19a-223087bd9feac43-acbddce75c44545-ddc2ac589667534-534a24d63bc4de4-eeeddc9cb433c63-feccdb976da4fc3-213e24eebbdc8ba-bca8baa87f87ea9-312545898bdaefb-632c85bcadebffc-201600a00b20e40-000912a12233ccc-333feefddfcde36-ddbcdb9cc6bb222-eeeeee333900b00-2369cdeef38ce65-9dafdafc6fa4e54-bb9655feb6aaacb-69adcbfb7f77a57-923eedddaaa6553-8ca986faafdafea-3322564aa9cadee-444000cf0f04401-eecadb6a9288656-fecffdcee9dc876-cfdbdb556a56f24-9caffce61f93996-5358788b9cf8d54-aaac57e15444333-fecd88444999ccc-0683993ba9a2eb1-e885449cbceceec-a06e14f64ed6399-f04f80fb28b00b7-febf84e42312fdb-5543339b628a357-1aa543ffefedaba-533d66fb8fcbedc-ffbaea6ba578525-eeecb8b25432110-977ca9997788576-ffeefdccbdebffd-7ceaddddce83f60-f46f99fcbcca8a9-ec7d54b24522577-3330660890bc0df-444767b88eb9fdb-f55f93fc2ed7dec-9b9fcaf87e46233-6548baefbea2b52-0ac4bcfeead38b0-5675cbce6f66c55-753d87ecaedccdd-edccb8066034013-414b15e70fc0891-5555784aa9dadfb-09a644c34e64ec5-e57d88ca9cddeed-4ba7caddaf99f47-9dcbdaddafa6643-322433355266188-af0fa0f0aa0f0af-c34d65fb78ac657-fd8eedfcafb7f99-7caddbdb6b53334-854dfeffdfddeaa-eee766888666100";
+let p = [];
 
+// geloma - muted, earthy, plain
+p[1] = "444ffddb6533233-6548baefbea2b52-9caffce61f93996-69adcbfb7f77a57-eecadb6a9288656-bca8baa87f87ea9-e885449cbceceec-f46f99fcbcca8a9-e57d88ca9cddeed-aecdebfcbfaaf89-533d66fb8fcbedc-7caddbdb6b53334-9dcbdaddafa6643-bdd688222433733-fecd88444999ccc-fecffdcee9dc876-bb9655feb6aaacb-632c85bcadebffc-feccdb976da4fc3-8ca986faafdafea-abaccbeecedbeca-a56ba9ccaedaeeb-545888acbcdaeda-753d87ecaedccdd-977ca9997788576-854dfeffdfddeaa-fd8eedfcafb7f99-444767b88eb9fdb-ffeefdccbdebffd-bdbcdbddbedbfdb-bb8cc8ed9eb8ea8-dca987ddd7659ab-eeacb8665444333";
 
+// jacquard - greeny bluey, nautical
+p[2] = "312545898bdaefb-674784bd6eed644-ddbcdb9cc6bb222-223087bd9feac43-acbddce75c44545-eeeddc9cb433c63-1aa543ffefedaba-2369cdeef38ce65-ddc2ac589667534-3322564aa9cadee-5555784aa9dadfb-322433355266188-edccb8066034013-3330660890bc0df-5543339b628a357-2041351657b19c6-4ba7caddaf99f47-ffbaea6ba578525-0683993ba9a2eb1-0ac4bcfeead38b0-2665948c2be0efe-fffce6eed211ce6";
+
+// starčevo - red, or tribal / clashing
+p[3] = "313445688ecac24-efcdeb555323914-923eedddaaa6553-9b9fcaf87e46233-697101ba0cb8d35-5358788b9cf8d54-cfdbdb556a56f24-eeecb8b25432110-333feefddfcde36-ce5fff0005be2ad-f44efcce6debeee-eda4208baed9f20-aaac57e15444333-eeeeee333900b00-213e24eebbdc8ba-edb123f35eb4edb-febf84e42312fdb-000912a12233ccc-f342221771bbffc-201600a00b20e40";
+
+// duraeuropa - bright, summery, colorful
+p[4] = "423925d84eb5dfc-303404614b44e74-643feb7bae71ea3-8216868a6bb5ec5-fa9e78b68657357-bc5ee8fb4e77a45-ec7d54b24522577-5675cbce6f66c55-543f72cc4eea6b9-fc8f95e64e34388-09a644c34e64ec5-c34d65fb78ac657-534a24d63bc4de4-f55f93fc2ed7dec-7ceaddddce83f60-9dafdafc6fa4e54-c13e72cc0ffb19a-aa4eb3f53c13098-e45f83ee7ffb9cb-bbacb2e73e27333-a06e14f64ed6399-f04f80fb28b00b7-414b15e70fc0891";
+
+// warp - rainbow (rare!);
+p[5] = "444000cf0f04401-af0fa0f0aa0f0af";
+
+// ixchel - black and white (rarest!)
+p[6] = "000111EEECCCAAA";
+
+//-----------------------------------------------------------------------------
+// distributions
+//-----------------------------------------------------------------------------
+
+const palletDist = {
+  6: .01,
+  5: .05,
+  4: .11,
+  3: .21,
+  2: .21,
+  1: .41
+};
+
+// used for divs, as well as > 9 (21% chances) ie. rotation chance, chaos bg chance, curve chance, slant chance
+const divDist = {
+  15: .01,
+  10: .10,
+  9: .10,
+  8: .11,
+  7: .15,
+  6: .15,
+  5: .15,
+  4: .11,
+  3: .06,
+  2: .06
+}
+
+// string weight
+const stWtDist = {
+  3: .40,
+  2: .60
+}
 //-----------------------------------------------------------------------------
 // main
 //-----------------------------------------------------------------------------
@@ -212,24 +278,24 @@ const hashToTraits = hash => {
   const stY = cvH * 0.25;    
   const enY = cvH * 0.75;
 
-  // random consts
-  let rdPal = getPallet(pallettes.split("-"), r);                                                      // pick a random color pallette
-  const rotCh = ri(1, 10) >= 9 ? true : false;                                              // 2 in 10 chance to randomly rotate the canvas 
-  const divNum = ri(2, 10);                                                                 // we can have between 2 - 10 color divisions
-  const chBGc = ri(1,10);                                                           // 2 in 10 chance of non-harmonious 'chaos' (any color!) background              
+  const pNum = parseInt(selectRandomDist(palletDist, r));                                   // pick a random color pallette
+  const rdPal = getPallet(pNum, r);
+  const rotCh =  parseInt(selectRandomDist(divDist, r)) >= 9 ? true : false;                // 21% chance to randomly rotate the canvas
+  const divNum = parseInt(selectRandomDist(divDist, r));                                    // we can have between 2 - 10 (rare ch for 15) color divisions
+  const chBGc = parseInt(selectRandomDist(divDist, r));                                     // 21% chance of non-harmonious 'chaos' (any color!) background              
   const bgCl = chBGc < 9                                                            
     ? changeCC(selectRandom(rdPal, r), rn(0.45, 0.75))                                      // define the bg color as either a dulled/lightened color in the pallette,
     : color(ri(0, 255), ri(0, 255), ri(0, 255));                                            // or a 'chaos' color
-  const slCh = ri(1,10);
-  let slA = 0;                                                                         // default 'slant' angle is endY pos of loom - startY pos of loom / 4,
+  const slCh = parseInt(selectRandomDist(divDist, r));
+  let slA = 0;                                                                              // default 'slant' angle is endY pos of loom - startY pos of loom / 4,
   const ySlT = (enY - stY) / 4;                                                
-  if(slCh > 5) {                                                                     // there's a 50% chance this will get applied
+  if(slCh > 5) {                                                                            // there's a 50% chance this will get applied
     slA = ySlT;
   }
-  const stWt = parseInt(ri(2,3));                                                      // the line weight of each strand can be between 2 (stringy) - 3 (solid)
-  const cvCh = parseInt(ri(1, 10)) >= 9 ? true : false;                                  // 2 in 10 chance of sweeping bezier curves for some divisions
-  const rndDy = randomDate(new Date(2012, 0, 1), new Date(), rn(0,1));                  // on a random day/month of the year, the script will slide-animate for the entire day.
-  const divs = createDvs(rdPal, (enY - stY), stX, enX, divNum, ri, rn, r);      // divisions config const
+  const stWt = parseInt(selectRandomDist(stWtDist, r));                                     // the line weight of each strand can be between 2 (stringy) - 3 (solid)
+  const cvCh = parseInt(selectRandomDist(divDist, r)) >= 9 ? true : false;                  // 2 in 10 chance of sweeping bezier curves for some divisions
+  const rndDy = randomDate(new Date(2012, 0, 1), new Date(), rn(0,1));                      // on a random day/month of the year, the script will slide-animate for the entire day.
+  const divs = createDvs(rdPal, (enY - stY), stX, enX, divNum, ri, rn, r);                  // divisions config const
 
   // adding to tokenState, to help in draw function in art.js
   tokenState.bgCl = bgCl;
@@ -238,6 +304,7 @@ const hashToTraits = hash => {
 
   return {
     rdPal,
+    pNum,
     divNum,
     chBGc,
     bgCl,

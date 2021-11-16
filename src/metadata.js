@@ -9,6 +9,7 @@ const hashToMetadata = (hash, state) => {
     seed,
     rotCh,
     divNum,
+    pNum,
     chBGc,
     slA,
     stWt,
@@ -25,25 +26,28 @@ const hashToMetadata = (hash, state) => {
   //
 
   return [{
-    trait_type: "Divisions",
+    trait_type: "divisions",
     value: divNum
   }, {
-    trait_type: "UncutStyle",
-    value: slA > 0 ? 'Lifted' : 'Flat',
-  }, { 
-    trait_type: "BackgroundStyle",
-    value: chBGc < 8 ? "Harmonious" : "Random",
+    trait_type: "paletteFamily",
+    value: getPName(pNum)
   }, {
-    trait_type: "InitialStrokeWeight",
+    trait_type: "uncutStyle",
+    value: slA > 0 ? 'lifted' : 'flat',
+  }, { 
+    trait_type: "bgStyle",
+    value: chBGc < 8 ? "harmonious" : "chaos",
+  }, {
+    trait_type: "strokeWeight",
     value: stWt,
   }, {
-    trait_type: "Rotation",
-    value: rotCh ? 'Ascending' : 'Normal',
+    trait_type: "rotation",
+    value: rotCh ? 'ascending' : 'normal',
   }, {
-    trait_type: "LineStyle",
-    value: cvCh ? 'Curved' : 'Straight',
+    trait_type: "lineStyle",
+    value: cvCh ? 'curved' : 'straight',
   }, {
-    trait_type: "LiftingOn",
+    trait_type: "liftingOn",
     value: rndDy.getDate() + '-' + rndDy.getMonth(),
   }];
 
