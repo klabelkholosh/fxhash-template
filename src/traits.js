@@ -91,6 +91,13 @@ const selectRandom = (array, r) => array[Math.floor(r() * array.length)];
 
 //-----------------------------------------------------------------------------
 
+const selectRandomDist = (distMap, r) => {
+  const keys = Object.keys(distMap)
+    .reduce((a, k) => a.concat(repeat(k, distMap[k] * 100)), []);
+  return selectRandom(shuffle(keys, r), r);
+};
+
+//-----------------------------------------------------------------------------
 const getPallet = (pallettes, r) => {
   return String(selectRandom(pallettes, r)).match(/.{1,3}/g);
 };
@@ -123,58 +130,56 @@ function randomDate(start, end, rn) {
 
 //-----------------------------------------------------------------------------
 
-// define the division data that will be used to generate the portal
-function createDvs(rdPal, lineLayers, pStartX, pEndX, divNum, ri, rn, r) {
+// define the division data that will be used to generate the loom
+function createDvs(rdPal, lineLayers, stX, enX, divNum, ri, rn, r) {
   let dvs = [];
-  let runningCut = parseInt(lineLayers / divNum);
+  let cutY = parseInt(lineLayers / divNum);
   let pi = 0;
   let ctXRC = 0;
-  let tempColor = '000000';
+  let tCl = '000000';
 
   for (let i = 0; i < divNum; i++) {
     ctXRC = ri(1, 10);
     
     // ensure we cycle through pallette colours, rather than running out if undefined
     if (typeof rdPal[`${i + 1}`] === 'undefined'){
-      tempColor = rdPal[`${pi}`];
+      tCl = rdPal[`${pi}`];
       pi++;
       if ((pi + 1) > rdPal.length) { pi = 0; } // reset pi when at end of pallette to keep looping
     } else {
-      tempColor = rdPal[`${i + 1}`];
+      tCl = rdPal[`${i + 1}`];
     }
 
     // determine whether we randomly add a cutX
     if (ctXRC > 4) {
-      cutX = rn((pStartX + 10), (pEndX - 10));
+      cutX = rn((stX + 10), (enX - 10));
       colorX = selectRandom(rdPal, r);
       if(ri(1, 10) <= 8){
-          cutXstyle = null; //none
+          ctXst = null; //none
       } else {
         if(ri(1, 10) <= 5){
-          cutXstyle = "3"; //droopy
+          ctXst = "3"; //droopy
         } else {
-          cutXstyle = "4"; //pouring
+          ctXst = "4"; //pouring
         }
       }
     } else {
       cutX = null;
       colorX = null;
-      cutXstyle = null;
+      ctXst = null;
     }
-    
-    let tempObj = {
-      cutY: runningCut,
-      color: `#${tempColor}`,
-      cutX: cutX,
-      colorX: `#${colorX}`,
-      cutXstyle: cutXstyle
-    };
 
     // push to end of array
-    dvs.push(tempObj);
+    dvs.push({
+      cutY,
+      color: `#${tCl}`,
+      cutX,
+      colorX: `#${colorX}`,
+      ctXst
+    });
 
     // update string .. if 1 before end, replace with just total number of line layers
-    runningCut = runningCut + parseInt(lineLayers / divNum);
+    cutY = cutY + parseInt(lineLayers / divNum);
   }
     
   // make sure last element is set to total lineLayers to fix occasional bug
@@ -200,12 +205,12 @@ const hashToTraits = hash => {
   const [r, rn, ri] = mkRandom(hash);
 
   // size / dimension consts
-  const canvasWidth   = window.innerHeight;
-  const canvasHeight  = window.innerHeight;
-  const pStartX       = canvasWidth * 0.25;     
-  const pEndX         = canvasWidth * 0.75;      
-  const pStartY       = canvasHeight * 0.25;    
-  const pEndY         = canvasHeight * 0.75;
+  const cvW = window.innerHeight;
+  const cvH = window.innerHeight;
+  const stX = cvW * 0.25;     
+  const enX = cvW * 0.75;
+  const stY = cvH * 0.25;    
+  const enY = cvH * 0.75;
 
   // random consts
   let rdPal = getPallet(pallettes.split("-"), r);                                                      // pick a random color pallette
@@ -215,16 +220,16 @@ const hashToTraits = hash => {
   const bgCl = chBGc < 9                                                            
     ? changeCC(selectRandom(rdPal, r), rn(0.45, 0.75))                                      // define the bg color as either a dulled/lightened color in the pallette,
     : color(ri(0, 255), ri(0, 255), ri(0, 255));                                            // or a 'chaos' color
-  const slantChance = ri(1,10);
-  let slantAdd = 0;                                                                         // default 'slant' angle is endY pos of portal - startY pos of portal / 4,
-  const ySlantTweak = (pEndY - pStartY) / 4;                                                
-  if(slantChance > 5) {                                                                     // there's a 50% chance this will get applied
-    slantAdd = ySlantTweak;
+  const slCh = ri(1,10);
+  let slA = 0;                                                                         // default 'slant' angle is endY pos of loom - startY pos of loom / 4,
+  const ySlT = (enY - stY) / 4;                                                
+  if(slCh > 5) {                                                                     // there's a 50% chance this will get applied
+    slA = ySlT;
   }
   const stWt = parseInt(ri(2,3));                                                      // the line weight of each strand can be between 2 (stringy) - 3 (solid)
-  const curveCh = parseInt(ri(1, 10)) >= 9 ? true : false;                                  // 2 in 10 chance of sweeping bezier curves for some divisions
+  const cvCh = parseInt(ri(1, 10)) >= 9 ? true : false;                                  // 2 in 10 chance of sweeping bezier curves for some divisions
   const rndDy = randomDate(new Date(2012, 0, 1), new Date(), rn(0,1));                  // on a random day/month of the year, the script will slide-animate for the entire day.
-  const divs = createDvs(rdPal, (pEndY - pStartY), pStartX, pEndX, divNum, ri, rn, r);      // divisions config const
+  const divs = createDvs(rdPal, (enY - stY), stX, enX, divNum, ri, rn, r);      // divisions config const
 
   // adding to tokenState, to help in draw function in art.js
   tokenState.bgCl = bgCl;
@@ -236,18 +241,18 @@ const hashToTraits = hash => {
     divNum,
     chBGc,
     bgCl,
-    slantAdd,
-    ySlantTweak,
+    slA,
+    ySlT,
     stWt,
-    curveCh,
+    cvCh,
     rndDy,
     divs,
-    canvasWidth,
-    canvasHeight,
-    pStartX,
-    pEndX,
-    pStartY,
-    pEndY
+    cvW,
+    cvH,
+    stX,
+    enX,
+    stY,
+    enY
   };
 
 };

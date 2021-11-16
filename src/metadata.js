@@ -10,9 +10,9 @@ const hashToMetadata = (hash, state) => {
     rotCh,
     divNum,
     chBGc,
-    slantAdd,
+    slA,
     stWt,
-    curveCh,
+    cvCh,
     rndDy
   } = hashToTraits(hash);
 
@@ -29,7 +29,7 @@ const hashToMetadata = (hash, state) => {
     value: divNum
   }, {
     trait_type: "UncutStyle",
-    value: slantAdd > 0 ? 'Lifted' : 'Flat',
+    value: slA > 0 ? 'Lifted' : 'Flat',
   }, { 
     trait_type: "BackgroundStyle",
     value: chBGc < 8 ? "Harmonious" : "Random",
@@ -41,7 +41,7 @@ const hashToMetadata = (hash, state) => {
     value: rotCh ? 'Ascending' : 'Normal',
   }, {
     trait_type: "LineStyle",
-    value: curveCh ? 'Curved' : 'Straight',
+    value: cvCh ? 'Curved' : 'Straight',
   }, {
     trait_type: "LiftingOn",
     value: rndDy.getDate() + '-' + rndDy.getMonth(),

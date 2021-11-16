@@ -30,9 +30,9 @@ const tokenState = {
   width: 5,
   lnThk: 0,
   flutA: 0,
-  divXSlide: 0,
+  xSl: 0,
   flatA: 0,
   moving: true,
   anmC: 0,
-  portals: []
+  loom: []
 };
