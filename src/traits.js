@@ -169,6 +169,7 @@ function getBG(rdPal, r1, rn, ri, chBGc) {
     let g = ((cPd >>  8) & 0xff) - l2;               // extract green
     let b = ((cPd >>  0) & 0xff) - l3;               // extract blue
     if (sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8)) < 15) { // 15 seems to be a good level of similarity.. below, too similar
+      if (l1 === 0) { l1 = 255; l2 = 255; l3 = 255; } // extremely rare chance with ixchel with black bg & black other to not blend, therefore set to grey
       bgCl = changeCC([toHex(l1),toHex(l2),toHex(l3)].join(""), 0.5);
     }
   });
@@ -190,7 +191,6 @@ function createDvs(rdPal, lineLayers, stX, enX, divNum, ri, rn, r) {
   let cutY = parseInt(lineLayers / divNum);
   let pi = 0;
   let ctXRC = 0;
-  let tCl = '000000';
 
   for (let i = 0; i < divNum; i++) {
     ctXRC = ri(1, 10);

@@ -124,7 +124,7 @@ function drawLoom(htP, htPIncr, xSt, xEn, ySt, yEn, dvs, ySlT, slA, stWt, cvCh, 
       stroke(dvs.find((el) => i < el.cutY).color);
 
       // if there's an X cut, draw both colored lines, otherwise just solid line
-      if(checkXDiv(i, dvs)) {
+      if(chkXd(i, dvs)) {
 
         // draw either an angled cutX line, or a pouring/droopy one...
         ctXst = dvs.find((el) => i < el.cutY).ctXst;
@@ -256,9 +256,4 @@ function drawCutXLine(dvs, x1, y1, y2, ctr, ySlT, xEn) {
 //-----------------------------------------------------------------------------------------------------------------------------------
 
 // check if there indeed is an X cut in a division
-function checkXDiv(i, dvs) {
-  if (dvs.find((el) => i < el.cutY).cutX !== null){
-    return true;
-  }
-  return false;
-}
+const chkXd = (i, dvs) => dvs.find((el) => i < el.cutY).cutX !== null ? true : false;
