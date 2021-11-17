@@ -36,7 +36,7 @@ const hashToMetadata = (hash, state) => {
     value: slA > 0 ? 'lifted' : 'flat',
   }, { 
     trait_type: "bgStyle",
-    value: chBGc < 8 ? "harmonious" : "chaos",
+    value: chBGc < 10 ? "harmonious" : "chaos",
   }, {
     trait_type: "strokeWeight",
     value: stWt,
@@ -48,7 +48,7 @@ const hashToMetadata = (hash, state) => {
     value: cvCh ? 'curved' : 'straight',
   }, {
     trait_type: "liftingOn",
-    value: rndDy.getDate() + '-' + rndDy.getMonth(),
+    value: rndDy.getDate() + '-' + (rndDy.getMonth() + 1),
   }];
 
 };

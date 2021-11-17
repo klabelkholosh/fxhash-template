@@ -9,7 +9,7 @@ function setup() {
 
   // grab hash from tokenData
   hash = tokenData.hash;
-
+  
   let {
     seed,
     rdPal,

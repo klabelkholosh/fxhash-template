@@ -124,11 +124,10 @@ const getPName = (pNum) => {
 // dulls / intensifies a colour by changing its percentage. Wow!
 function changeCC(c, prc) {
   if(typeof c !== 'undefined'){
-    let sixCol = c.split("").map((it)=>{
-      return it + it;
-    }).join("");
+
+    let xP = xpPal(c);
   
-    let rgb = parseInt(sixCol, 16);                 // convert rrggbb to decimal
+    let rgb = parseInt(xP, 16);                 // convert rrggbb to decimal
     let r = ((rgb >> 16) & 0xff) * prc;             // extract red and change prc
     let g = ((rgb >>  8) & 0xff) * prc;             // extract green
     let b = ((rgb >>  0) & 0xff) * prc;             // extract blue
@@ -136,6 +135,44 @@ function changeCC(c, prc) {
   } else {
     return c;
   } 
+}
+
+//-----------------------------------------------------------------------------
+
+// expand palette from 3-char colours to 6-char colours
+const xpPal = p => p.split("").map((it)=>it + it).join("");
+
+//-----------------------------------------------------------------------------
+
+const toHex = x => x.toString(16).padStart(2, '0');
+
+//-----------------------------------------------------------------------------
+
+// grab BG colour
+function getBG(rdPal, r1, rn, ri, chBGc) {
+  let bgCl = 0;
+  if (chBGc < 10) {
+    bgCl = changeCC(selectRandom(rdPal, r1), rn(0.45, 0.75))
+  } else {
+    bgCl = color(ri(0, 255), ri(0, 255), ri(0, 255));
+  }
+
+  // check for not too similar to anything else in palette, otherwise crank up the brightness
+  rdPal.map(p => {
+    let 
+      cPd = parseInt(xpPal(p), 16),
+      l1 = bgCl.levels[0],
+      l2 = bgCl.levels[1],
+      l3 = bgCl.levels[2];                           // convert rrggbb to decimal
+    let rmean = ( ((cPd >> 16) & 0xff) + l1 ) / 2;
+    let r = ((cPd >> 16) & 0xff) - l1;               // extract red and change prc
+    let g = ((cPd >>  8) & 0xff) - l2;               // extract green
+    let b = ((cPd >>  0) & 0xff) - l3;               // extract blue
+    if (sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8)) < 15) { // 15 seems to be a good level of similarity.. below, too similar
+      bgCl = changeCC([toHex(l1),toHex(l2),toHex(l3)].join(""), 0.5);
+    }
+  });
+  return bgCl;
 }
 
 //-----------------------------------------------------------------------------
@@ -282,10 +319,8 @@ const hashToTraits = hash => {
   const rdPal = getPallet(pNum, r);
   const rotCh =  parseInt(selectRandomDist(divDist, r)) >= 9 ? true : false;                // 21% chance to randomly rotate the canvas
   const divNum = parseInt(selectRandomDist(divDist, r));                                    // we can have between 2 - 10 (rare ch for 15) color divisions
-  const chBGc = parseInt(selectRandomDist(divDist, r));                                     // 21% chance of non-harmonious 'chaos' (any color!) background              
-  const bgCl = chBGc < 9                                                            
-    ? changeCC(selectRandom(rdPal, r), rn(0.45, 0.75))                                      // define the bg color as either a dulled/lightened color in the pallette,
-    : color(ri(0, 255), ri(0, 255), ri(0, 255));                                            // or a 'chaos' color
+  const chBGc = parseInt(selectRandomDist(divDist, r));                                     // 11% chance of non-harmonious 'chaos' (any color!) background              
+  const bgCl = getBG(rdPal, r, rn, ri, chBGc, 0);                                           // define the bg color as either a dulled/lightened color in the pallette, or a 'chaos' color
   const slCh = parseInt(selectRandomDist(divDist, r));
   let slA = 0;                                                                              // default 'slant' angle is endY pos of loom - startY pos of loom / 4,
   const ySlT = (enY - stY) / 4;                                                
