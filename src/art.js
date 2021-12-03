@@ -9,9 +9,7 @@ function setup() {
 
   // grab hash from tokenData
   hash = tokenData.hash;
-  // hash = "0x437ab1cce7a4cec0afff55ff6db4f8e35ad540974970df02d048930dba91a571";
- // hash = "0x2f59db58c2e529b8a653164e47e7f3b023bfb8cac1a9b6df5a629cd1f5e62b32";
-  hash = "0xd7252981ff1c5b039eb7e477f075c74330903861167fa9b5fc959b01e39d393a";
+
   console.log(hash);
 
   let {
@@ -85,7 +83,7 @@ function setup() {
 function draw() {
 
   // only animate if moving is true
-  //if (tokenState.moving) {
+  if (tokenState.moving) {
     
     rot();
 
@@ -99,7 +97,7 @@ function draw() {
       tokenState.xSl = sgma;
       tokenState.flatA = sgma;
     }
-  //}
+  }
   
 }
 
@@ -202,18 +200,18 @@ function drawLine(x1, x2, y1, y2, slA, ySlT, cvCh, xSt, xEn, ySt, yEn, lS, ctr, 
     cpx2,
     cpy2,
     crCtX = lS === "3" || lS === "4" ? dvs.find((el) => ctr < el.cutY).cutX : null,
-    bz1 = ((x1 + ((xEn - xSt) / 20)))  + ((xEn - xSt) / 4),
-    bz2 = (y1 + ((yEn - ySt) / 20)),
-    bz3 = (crCtX + ((xEn - xSt) / 20)) + (tokenState.fltTwk),
-    bz4 = y2 - ((yEn - ySt) / 20),
+    bz1 = (random(x1 + ((xEn - xSt) / 20), x1))  + ((xEn - xSt) / 4),
+    bz2 = random(y1 + ((yEn - ySt) / 20), y1),
+    bz3 = random(crCtX + ((xEn - xSt) / 20), crCtX) + random(tokenState.fltTwk),
+    bz4 = (random(y2 + ((yEn - ySt) / 20), y2)) - ((yEn - ySt) / 20),
     tX1 = x1, 
-    tY1 = y1 - ySlT + (tokenState.fltTwk / 2), 
+    tY1 = y1 - ySlT + random(tokenState.fltTwk / 2), 
     tX2 = x2,
-    tY2 = slA > 0 ? y2 - slA + (tokenState.fltTwk / 2) : y2;
+    tY2 = slA > 0 ? y2 - slA + random(tokenState.fltTwk / 2) : y2;
 
     if (lS === "1" || lS === "2") { // shadow dark or shadow_light
       let dk = lS === "1" ? random(0.1, 0.4) : random(0.5, 0.75);
-      stroke(color(changeCC(random(rdPal), dk))); // NED TO CHANGE AS WELL
+      stroke(color(changeCC(random(rdPal), dk)));
     } else if (lS === "3" || lS === "4") { // droopy or pouring
       // bezier curve points 
       cpx1 = bz1; 
