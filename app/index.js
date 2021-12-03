@@ -19,14 +19,8 @@ const onChangeLnThk = value => {
   tokenState.lnThk = parseInt(value);
 };
 
-const onMouseDwnSlider = value => {
+const onMousSldrTog = () => {
   if(!document.getElementById('moving').checked) {
-    tokenState.moving = true;
-  }
-};
-
-const onMouseUpSlider = value => {
-  if(!document.getElementById('moving').checked) {
-    tokenState.moving = false;
+    tokenState.moving = !tokenState.moving;
   }
 };

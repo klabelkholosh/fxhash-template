@@ -10,8 +10,6 @@ function setup() {
   // grab hash from tokenData
   hash = tokenData.hash;
 
-  console.log(hash);
-
   let {
     seed,
     rdPal,
@@ -31,8 +29,6 @@ function setup() {
     rndDy
   } = hashToTraits(hash);
 
-  
-
   // default frame-rate is 8
   frameRate(8);                                              
 
@@ -47,8 +43,6 @@ function setup() {
   tokenState.xSl = 0;
   tokenState.flatA = 0;
   tokenState.anmC = 0;
-  
-  let fT = random(tokenState.fltTwk);
 
   // push defined loom to array
   tokenState.loom.push([
@@ -63,8 +57,7 @@ function setup() {
     slA, 
     stWt,
     cvCh,
-    rdPal,
-    fT
+    rdPal
   ]);
   
   rot();
@@ -121,7 +114,7 @@ function rot() {
 // OUR MAIN FUNCTION THAT PULLS IT ALL TOGETHER AND DRAWS A DAMN LOOM
 //-----------------------------------------------------------------------------------------------------------------------------------
 
-function drawLoom(htP, htPIncr, xSt, xEn, ySt, yEn, dvs, ySlT, slA, stWt, cvCh, rdPal, fT) {
+function drawLoom(htP, htPIncr, xSt, xEn, ySt, yEn, dvs, ySlT, slA, stWt, cvCh, rdPal) {
 
   // let's draw our central interference object
   for (let i = 0; i < (yEn - ySt); i++) {
@@ -130,7 +123,7 @@ function drawLoom(htP, htPIncr, xSt, xEn, ySt, yEn, dvs, ySlT, slA, stWt, cvCh, 
     strokeWeight(stWt + tokenState.lnThk);
 
     // define slightly random widths / line height starting positions, to create flutter effect
-    fT = random(tokenState.fltTwk);
+    let fT = random(tokenState.fltTwk);
     let x1 = xSt + fT;
     let x2 = xEn - fT;
     let y1 = ySt + htP + fT / 2;
