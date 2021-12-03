@@ -23,7 +23,10 @@ function setup() {
     stX,
     enX,
     stY,
-    enY
+    enY,
+    rotCh,
+    bgCl,
+    rndDy
   } = hashToTraits(hash);
 
   // default frame-rate is 8
@@ -31,6 +34,17 @@ function setup() {
 
   // create canvas
   canvas = createCanvas(cvW, cvH);
+
+  // adding to tokenState, to initialize / help in draw function
+  tokenState.bgCl = color(bgCl);
+  tokenState.rndDy = rndDy;
+  tokenState.rotCh = rotCh;
+  tokenState.loom = [];
+  tokenState.xSl = 0;
+  tokenState.flatA = 0;
+  tokenState.anmC = 0;
+  
+  let fT = random(tokenState.fltTwk);
 
   // push defined loom to array
   tokenState.loom.push([
@@ -45,7 +59,8 @@ function setup() {
     slA, 
     stWt,
     cvCh,
-    rdPal
+    rdPal,
+    fT
   ]);
   
   rot();
@@ -102,7 +117,7 @@ function rot() {
 // OUR MAIN FUNCTION THAT PULLS IT ALL TOGETHER AND DRAWS A DAMN LOOM
 //-----------------------------------------------------------------------------------------------------------------------------------
 
-function drawLoom(htP, htPIncr, xSt, xEn, ySt, yEn, dvs, ySlT, slA, stWt, cvCh, rdPal) {
+function drawLoom(htP, htPIncr, xSt, xEn, ySt, yEn, dvs, ySlT, slA, stWt, cvCh, rdPal, fT) {
 
   // let's draw our central interference object
   for (let i = 0; i < (yEn - ySt); i++) {
@@ -111,7 +126,7 @@ function drawLoom(htP, htPIncr, xSt, xEn, ySt, yEn, dvs, ySlT, slA, stWt, cvCh, 
     strokeWeight(stWt + tokenState.lnThk);
 
     // define slightly random widths / line height starting positions, to create flutter effect
-    let fT = random(tokenState.fltTwk);
+    fT = random(tokenState.fltTwk);
     let x1 = xSt + fT;
     let x2 = xEn - fT;
     let y1 = ySt + htP + fT / 2;
@@ -192,7 +207,7 @@ function drawLine(x1, x2, y1, y2, slA, ySlT, cvCh, xSt, xEn, ySt, yEn, lS, ctr, 
 
     if (lS === "1" || lS === "2") { // shadow dark or shadow_light
       let dk = lS === "1" ? random(0.1, 0.4) : random(0.5, 0.75);
-      stroke(changeCC(random(rdPal), dk));
+      stroke(color(changeCC(random(rdPal), dk)));
     } else if (lS === "3" || lS === "4") { // droopy or pouring
       // bezier curve points 
       cpx1 = bz1; 

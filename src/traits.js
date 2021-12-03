@@ -131,7 +131,8 @@ function changeCC(c, prc) {
     let r = ((rgb >> 16) & 0xff) * prc;             // extract red and change prc
     let g = ((rgb >>  8) & 0xff) * prc;             // extract green
     let b = ((rgb >>  0) & 0xff) * prc;             // extract blue
-    return color(r,g,b);
+    //return color(r,g,b);
+    return [r,g,b];
   } else {
     return c;
   } 
@@ -154,16 +155,17 @@ function getBG(rdPal, r1, rn, ri, chBGc) {
   if (chBGc < 10) {
     bgCl = changeCC(selectRandom(rdPal, r1), rn(0.45, 0.75))
   } else {
-    bgCl = color(ri(0, 255), ri(0, 255), ri(0, 255));
+    // bgCl = color(ri(0, 255), ri(0, 255), ri(0, 255));
+    bgCl = [ri(0, 255), ri(0, 255), ri(0, 255)];
   }
 
   // check for not too similar to anything else in palette, otherwise crank up the brightness
   rdPal.map(p => {
     let 
       cPd = parseInt(xpPal(p), 16),
-      l1 = bgCl.levels[0],
-      l2 = bgCl.levels[1],
-      l3 = bgCl.levels[2];                           // convert rrggbb to decimal
+      l1 = bgCl[0],
+      l2 = bgCl[1],
+      l3 = bgCl[2];                           // convert rrggbb to decimal
     let rmean = ( ((cPd >> 16) & 0xff) + l1 ) / 2;
     let r = ((cPd >> 16) & 0xff) - l1;               // extract red and change prc
     let g = ((cPd >>  8) & 0xff) - l2;               // extract green
@@ -332,11 +334,6 @@ const hashToTraits = hash => {
   const rndDy = randomDate(new Date(2012, 0, 1), new Date(), rn(0,1));                      // on a random day/month of the year, the script will slide-animate for the entire day.
   const divs = createDvs(rdPal, (enY - stY), stX, enX, divNum, ri, rn, r);                  // divisions config const
 
-  // adding to tokenState, to help in draw function in art.js
-  tokenState.bgCl = bgCl;
-  tokenState.rndDy = rndDy;
-  tokenState.rotCh = rotCh;
-
   return {
     rdPal,
     pNum,
@@ -354,7 +351,8 @@ const hashToTraits = hash => {
     stX,
     enX,
     stY,
-    enY
+    enY,
+    rotCh
   };
 
 };

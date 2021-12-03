@@ -27,12 +27,7 @@ const tokenData = {
 //-----------------------------------------------------------------------------
 // flatA = flattenAngle, lnThk = lineThickness, flutA = flutterAdd
 const tokenState = {
-  width: 5,
   lnThk: 0,
   flutA: 0,
-  xSl: 0,
-  flatA: 0,
-  moving: true,
-  anmC: 0,
-  loom: []
+  moving: true
 };
