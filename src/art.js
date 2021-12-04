@@ -9,8 +9,7 @@ function setup() {
 
   // grab hash from tokenData
   hash = tokenData.hash;
-  console.log(hash);
-  hash = "0xc3975eb6a77684ba16eb65d16e1b0c693a311ec94f942dad885cb526a650be96";
+  
   let {
     seed,
     rdPal,
