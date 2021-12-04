@@ -75,8 +75,11 @@ function setup() {
  */
 function draw() {
 
+  // convert 'true' from contract string
+  const isTrueSet = (String(tokenState.moving).toLowerCase() === 'true');
+
   // only animate if moving is true
-  if (tokenState.moving) {
+  if (isTrueSet) {
     
     rot();
 
@@ -97,7 +100,7 @@ function draw() {
 // define our canvas bg and draw a loom.. pulled out of draw() function so that setup() can call this initially for non-animated states
 function placeLoom() {
   background(tokenState.bgCl);                                           // set bg color
-  tokenState.fltTwk = 10 + tokenState.flutA;                             // default flutter tweak is 10, plus/minus user setting
+  tokenState.fltTwk = 10 + Number(tokenState.flutA);                     // default flutter tweak is 10, plus/minus user setting
   noFill();                                                              // no fills plz
   drawLoom(...tokenState.loom[0]);                                       // draw the loom!
 }
@@ -120,7 +123,7 @@ function drawLoom(htP, htPIncr, xSt, xEn, ySt, yEn, dvs, ySlT, slA, stWt, cvCh, 
   for (let i = 0; i < (yEn - ySt); i++) {
 
     // set a stroke weight
-    strokeWeight(stWt + tokenState.lnThk);
+    strokeWeight(stWt + Number(tokenState.lnThk));
 
     // define slightly random widths / line height starting positions, to create flutter effect
     let fT = random(tokenState.fltTwk);
