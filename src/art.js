@@ -9,7 +9,8 @@ function setup() {
 
   // grab hash from tokenData
   hash = tokenData.hash;
-
+  console.log(hash);
+  hash = "0xc3975eb6a77684ba16eb65d16e1b0c693a311ec94f942dad885cb526a650be96";
   let {
     seed,
     rdPal,
@@ -196,11 +197,9 @@ function drawLine(x1, x2, y1, y2, slA, ySlT, cvCh, xSt, xEn, ySt, yEn, lS, ctr, 
     cpx2,
     cpy2,
     crCtX = lS === "3" || lS === "4" ? dvs.find((el) => ctr < el.cutY).cutX : null,
-    bz1 = (random(x1 + ((xEn - xSt) / 20), x1))  + ((xEn - xSt) / 4),
-    bz2 = random(y1 + ((yEn - ySt) / 20), y1),
-    bz3 = random(crCtX + ((xEn - xSt) / 20), crCtX) + random(tokenState.fltTwk),
-    bz4 = (random(y2 + ((yEn - ySt) / 20), y2)) - ((yEn - ySt) / 20),
-    tX1 = x1, 
+    bz1 = x1  + ((xEn - xSt) / 4),
+    bz3 = crCtX + random(tokenState.fltTwk),
+    bz4 = y2 - ((yEn - ySt) / 20),
     tY1 = y1 - ySlT + random(tokenState.fltTwk / 2), 
     tX2 = x2,
     tY2 = slA > 0 ? y2 - slA + random(tokenState.fltTwk / 2) : y2;
@@ -211,7 +210,7 @@ function drawLine(x1, x2, y1, y2, slA, ySlT, cvCh, xSt, xEn, ySt, yEn, lS, ctr, 
     } else if (lS === "3" || lS === "4") { // droopy or pouring
       // bezier curve points 
       cpx1 = bz1; 
-      cpy1 = lS === "3" ? (bz2 + random(tokenState.fltTwk / 2)) : (bz2 - ySlT + random(tokenState.fltTwk / 2)) + ((yEn - ySt) / 20); 
+      cpy1 = lS === "3" ? (y1 + random(tokenState.fltTwk / 2)) : (y1 - ySlT + random(tokenState.fltTwk / 2)) + ((yEn - ySt) / 20); 
       cpx2 = lS === "3" ? bz3 : (bz3) - ((xEn - xSt) / 40);  
       cpy2 = bz4;
 
@@ -233,13 +232,12 @@ function drawLine(x1, x2, y1, y2, slA, ySlT, cvCh, xSt, xEn, ySt, yEn, lS, ctr, 
         cpy1 = y1;
         cpx2 = tX2;
         cpy2 = tY2;
-        tX1 = x1;
         tY1 = y1;
       }
     }
     
     bezier(
-      tX1, 
+      x1, 
       tY1,
       cpx1, 
       cpy1, 
