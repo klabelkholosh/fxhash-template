@@ -244,7 +244,7 @@ function createDvs(rdPal, lineLayers, stX, enX, divNum, ri, rn, r) {
   return dvs;
 }
 
-
+// if page is resized, especially height wise, ensure divisions are appropriately recalculated
 function recalcDvs(divs, lineLayers, divNum) {
   let cutY = parseInt(lineLayers / divNum);
   for(let i = 0; i < divNum; i++) {
