@@ -26,7 +26,11 @@ function setup() {
     enY,
     rotCh,
     bgCl,
-    rndDy
+    rndDy,
+    ri,
+    rn,
+    r,
+    divNum
   } = hashToTraits(hash);
 
   // default frame-rate is 8
@@ -43,6 +47,10 @@ function setup() {
   tokenState.xSl = 0;
   tokenState.flatA = 0;
   tokenState.anmC = 0;
+  tokenState.rsRi = ri;
+  tokenState.rsRn = rn;
+  tokenState.rsR = r;
+  tokenState.divNum = divNum;
 
   // push defined loom to array
   tokenState.loom.push([
@@ -107,14 +115,38 @@ function placeLoom() {
   tokenState.loom[0][2] = (windowWidth * 0.25) + ((windowWidth * 0.25) - (windowHeight * 0.25)) > 20 ? (windowWidth * 0.25) + ((windowWidth * 0.25) - (windowHeight * 0.25)) : 20;
   tokenState.loom[0][3] = (windowWidth * 0.75) - ((windowWidth * 0.25) - (windowHeight * 0.25));
   //tokenState.loom[0][4] = windowHeight * 0.25;
-  //tokenState.loom[0][5] = windowHeight * 0.75;
+  // tokenState.loom[0][5] = windowHeight * 0.75;
 
   
   drawLoom(...tokenState.loom[0]);                                       // draw the loom!
 }
 
 function windowResized(){
+  /*
+  tokenState.loom.push([
+    0.1, 
+    1, 
+    stX, 
+    enX, 
+    stY, 
+    enY, 
+    divs,
+    ySlT, 
+    slA, 
+    stWt,
+    cvCh,
+    rdPal
+  ]);
+  */
   resizeCanvas(windowWidth, windowHeight);
+  /*
+  const stX = (innerWidth * 0.25) + ((innerWidth * 0.25) - (innerHeight * 0.25)); // ensure we keep width at correct aspect ratio to height  
+  const enX = (innerWidth * 0.75) - ((innerWidth * 0.25) - (innerHeight * 0.25)); // ensure we keep width at correct aspect ratio to height
+  const stY = innerHeight * 0.25;    
+  const enY = innerHeight * 0.75;
+  let resD = createDvs(tokenState.loom[0][11], (enY - stY), stX, enX, tokenState.divNum, tokenState.rsRi, tokenState.rsRn, tokenState.rsR); 
+  tokenState.loom[0][6] = resD;
+  */
 }
 
  // rotate if we need to

@@ -353,7 +353,10 @@ const hashToTraits = hash => {
     enX,
     stY,
     enY,
-    rotCh
+    rotCh,
+    ri,
+    rn,
+    r
   };
 
 };
