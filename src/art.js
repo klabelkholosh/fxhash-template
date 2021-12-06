@@ -9,8 +9,6 @@ function setup() {
 
   // grab hash from tokenData
   hash = tokenData.hash;
-  console.log(hash);
-  // hash = "0x7ce7eba449b2c3986f36d9caededf883d4f1c7577f08dc8296dce22b1488944e";
 
   let {
     seed,
