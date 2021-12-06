@@ -9,7 +9,9 @@ function setup() {
 
   // grab hash from tokenData
   hash = tokenData.hash;
-  
+  console.log(hash);
+  // hash = "0x7ce7eba449b2c3986f36d9caededf883d4f1c7577f08dc8296dce22b1488944e";
+
   let {
     seed,
     rdPal,
@@ -97,19 +99,31 @@ function draw() {
   
 }
 
+
 // define our canvas bg and draw a loom.. pulled out of draw() function so that setup() can call this initially for non-animated states
 function placeLoom() {
   background(tokenState.bgCl);                                           // set bg color
   tokenState.fltTwk = 10 + Number(tokenState.flutA);                     // default flutter tweak is 10, plus/minus user setting
   noFill();                                                              // no fills plz
+
+  tokenState.loom[0][2] = (windowWidth * 0.25) + ((windowWidth * 0.25) - (windowHeight * 0.25)) > 20 ? (windowWidth * 0.25) + ((windowWidth * 0.25) - (windowHeight * 0.25)) : 20;
+  tokenState.loom[0][3] = (windowWidth * 0.75) - ((windowWidth * 0.25) - (windowHeight * 0.25));
+  //tokenState.loom[0][4] = windowHeight * 0.25;
+  //tokenState.loom[0][5] = windowHeight * 0.75;
+
+  
   drawLoom(...tokenState.loom[0]);                                       // draw the loom!
+}
+
+function windowResized(){
+  resizeCanvas(windowWidth, windowHeight);
 }
 
  // rotate if we need to
 function rot() {
   if(tokenState.rotCh) {
-    translate(innerWidth/ 50, innerHeight/ 1.015);
     rotate(-1.575);
+    translate(-(innerWidth/2) - (innerHeight/2), (innerWidth/2) - (innerHeight/2));
   }
 }
 
@@ -151,9 +165,9 @@ function drawLoom(htP, htPIncr, xSt, xEn, ySt, yEn, dvs, ySlT, slA, stWt, cvCh, 
           drawCutXLine(dvs, x1, y1, y2, i, ySlT + tokenState.flatA, x2);
         }
 
-        // ensure we're not going over the right-most X bound
-        tL = dvs.find((el) => i < el.cutY).cutX + random(tokenState.fltTwk) + ltXtw + tokenState.xSl;
-        tX2 =  tL > x2 ? x2 :  tL < x1 ? x1 : tL;
+        // get line slice point
+        tL = (x1 + (dvs.find((el) => i < el.cutY).cutX * (xEn - x1))) + random(tokenState.fltTwk) + ltXtw + tokenState.xSl;
+        tX2 =  tL > x2 ? x2 :  tL < x1 ? x1 : tL;  // ensure we're not going over the right-most X bound
 
         // draw shadow line for above
         if (ySlT + tokenState.flatA > 0) {
@@ -195,7 +209,7 @@ function drawLine(x1, x2, y1, y2, slA, ySlT, cvCh, xSt, xEn, ySt, yEn, lS, ctr, 
     cpy1,
     cpx2,
     cpy2,
-    crCtX = lS === "3" || lS === "4" ? dvs.find((el) => ctr < el.cutY).cutX : null,
+    crCtX = lS === "3" || lS === "4" ? (x1 + (dvs.find((el) => ctr < el.cutY).cutX * (x2 - x1))) : null,
     bz1 = x1  + ((xEn - xSt) / 4),
     bz3 = crCtX + random(tokenState.fltTwk),
     bz4 = y2 - ((yEn - ySt) / 20),
@@ -251,9 +265,9 @@ function drawLine(x1, x2, y1, y2, slA, ySlT, cvCh, xSt, xEn, ySt, yEn, lS, ctr, 
 // when we want to draw one of the 'cutX' thread lines..
 function drawCutXLine(dvs, x1, y1, y2, ctr, ySlT, xEn) {
 
-  // ensure we don't go over the right-hand width, nor before 1st xpos point
-  tL = dvs.find((el) => ctr < el.cutY).cutX + tokenState.xSl + random(tokenState.fltTwk);
-  tX2 =  tL > xEn ? xEn : tL < x1 ? x1 : tL;
+  // find cut x percentage point, use right x - start x to get length, then times by percentage and add to first x point to get cut point
+  tL = (x1 + (dvs.find((el) => ctr < el.cutY).cutX * (xEn - x1))) + tokenState.xSl + random(tokenState.fltTwk);
+  tX2 =  tL > xEn ? xEn : tL < x1 ? x1 : tL; // ensure we don't go over the right-hand width, nor before 1st xpos point
 
   line(
     x1, 

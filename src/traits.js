@@ -209,6 +209,7 @@ function createDvs(rdPal, lineLayers, stX, enX, divNum, ri, rn, r) {
     // determine whether we randomly add a cutX
     if (ctXRC > 4) {
       cutX = rn((stX + 10), (enX - 10));
+      cutX = r(1);
       colorX = selectRandom(rdPal, r);
       if(ri(1, 10) <= 8){
           ctXst = null; //none
@@ -310,10 +311,11 @@ const hashToTraits = hash => {
   const [r, rn, ri] = mkRandom(hash);
 
   // size / dimension consts
-  const cvW = window.innerHeight;
+  const cvW = window.innerWidth;
   const cvH = window.innerHeight;
-  const stX = cvW * 0.25;     
-  const enX = cvW * 0.75;
+
+  const stX = (cvW * 0.25) + ((cvW * 0.25) - (cvH * 0.25)); // ensure we keep width at correct aspect ratio to height  
+  const enX = (cvW * 0.75) - ((cvW * 0.25) - (cvH * 0.25)); // ensure we keep width at correct aspect ratio to height
   const stY = cvH * 0.25;    
   const enY = cvH * 0.75;
 
