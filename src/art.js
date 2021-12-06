@@ -27,10 +27,8 @@ function setup() {
     rotCh,
     bgCl,
     rndDy,
-    ri,
-    rn,
-    r,
-    divNum
+    divNum,
+    slCh
   } = hashToTraits(hash);
 
   // default frame-rate is 8
@@ -47,10 +45,8 @@ function setup() {
   tokenState.xSl = 0;
   tokenState.flatA = 0;
   tokenState.anmC = 0;
-  tokenState.rsRi = ri;
-  tokenState.rsRn = rn;
-  tokenState.rsR = r;
   tokenState.divNum = divNum;
+  tokenState.slCh = slCh;
 
   // push defined loom to array
   tokenState.loom.push([
@@ -112,42 +108,30 @@ function placeLoom() {
   tokenState.fltTwk = 10 + Number(tokenState.flutA);                     // default flutter tweak is 10, plus/minus user setting
   noFill();                                                              // no fills plz
 
-  tokenState.loom[0][2] = (windowWidth * 0.25) + ((windowWidth * 0.25) - (windowHeight * 0.25)) > 20 ? (windowWidth * 0.25) + ((windowWidth * 0.25) - (windowHeight * 0.25)) : 20;
-  tokenState.loom[0][3] = (windowWidth * 0.75) - ((windowWidth * 0.25) - (windowHeight * 0.25));
-  //tokenState.loom[0][4] = windowHeight * 0.25;
-  // tokenState.loom[0][5] = windowHeight * 0.75;
+  // if height/width was resized.. recalc the divisions, slants, etc. and append loom object for redrawing
+  let
+    wS = windowWidth * 0.25,
+    wE = windowWidth * 0.75,
+    hS = windowHeight * 0.25,
+    hE = windowHeight * 0.75;
 
-  
+  tokenState.loom[0][2] = (wS) + ((wS) - (hS)) > 20 ? (wS) + ((wS) - (hS)) : 20;
+  tokenState.loom[0][3] = (wE) - ((wS) - (hS));
+  tokenState.loom[0][4] = hS;
+  tokenState.loom[0][5] = hE;
+  tokenState.loom[0][6] = recalcDvs(tokenState.loom[0][6], ((hE) - (hS)), tokenState.divNum);
+  tokenState.loom[0][7] = (hE - hS) / 4;  
+  if(tokenState.slCh > 5) { tokenState.loom[0][8] = (hE - hS) / 4; }
+
   drawLoom(...tokenState.loom[0]);                                       // draw the loom!
 }
 
 function windowResized(){
-  /*
-  tokenState.loom.push([
-    0.1, 
-    1, 
-    stX, 
-    enX, 
-    stY, 
-    enY, 
-    divs,
-    ySlT, 
-    slA, 
-    stWt,
-    cvCh,
-    rdPal
-  ]);
-  */
   resizeCanvas(windowWidth, windowHeight);
-  /*
-  const stX = (innerWidth * 0.25) + ((innerWidth * 0.25) - (innerHeight * 0.25)); // ensure we keep width at correct aspect ratio to height  
-  const enX = (innerWidth * 0.75) - ((innerWidth * 0.25) - (innerHeight * 0.25)); // ensure we keep width at correct aspect ratio to height
-  const stY = innerHeight * 0.25;    
-  const enY = innerHeight * 0.75;
-  let resD = createDvs(tokenState.loom[0][11], (enY - stY), stX, enX, tokenState.divNum, tokenState.rsRi, tokenState.rsRn, tokenState.rsR); 
-  tokenState.loom[0][6] = resD;
-  */
+  if (!(String(tokenState.moving).toLowerCase() === 'true')) { rot(); }
+  placeLoom();
 }
+
 
  // rotate if we need to
 function rot() {

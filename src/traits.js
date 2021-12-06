@@ -244,6 +244,15 @@ function createDvs(rdPal, lineLayers, stX, enX, divNum, ri, rn, r) {
   return dvs;
 }
 
+
+function recalcDvs(divs, lineLayers, divNum) {
+  let cutY = parseInt(lineLayers / divNum);
+  for(let i = 0; i < divNum; i++) {
+    divs[i].cutY = i === (divNum-1) ? lineLayers : cutY * (i+1);
+  }
+  return divs;
+}
+
 //-----------------------------------------------------------------------------
 // pallettes
 //-----------------------------------------------------------------------------
@@ -354,9 +363,7 @@ const hashToTraits = hash => {
     stY,
     enY,
     rotCh,
-    ri,
-    rn,
-    r
+    slCh
   };
 
 };
