@@ -319,8 +319,8 @@ const hashToTraits = hash => {
   const [r, rn, ri] = mkRandom(hash);
 
   // size / dimension consts
-  const cvW = window.innerWidth;
-  const cvH = window.innerHeight;
+  const cvW = 4000;
+  const cvH = 4000;
 
   const stX = (cvW * 0.25) + ((cvW * 0.25) - (cvH * 0.25)); // ensure we keep width at correct aspect ratio to height  
   const enX = (cvW * 0.75) - ((cvW * 0.25) - (cvH * 0.25)); // ensure we keep width at correct aspect ratio to height

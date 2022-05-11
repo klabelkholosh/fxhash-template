@@ -5,10 +5,20 @@
 //-----------------------------------------------------------------------------
 // functions
 //-----------------------------------------------------------------------------
+
+let outputScale = 5;
+let currentScale;
+let myScaledCanvas;
+let canvas;
+
 function setup() {
 
   // grab hash from tokenData
   hash = tokenData.hash;
+  // hash = "0x86b21247f817078995b93e8b76ca71d38087f3ca38aa2ff847b233182636597a"; // us
+  hash = "0x3a91e7d9c341211e48f54e050105848a71bd1632f9518d3bd1b98a93bc7f93ab"; // kim
+  hash = "0x1a6d9e599f0fa532733c29056d292a6b10aede7cef0624c4405e376c1b8ef0c8"; // karen
+  console.log('hash:', hash);
 
   let {
     seed,
@@ -33,6 +43,7 @@ function setup() {
 
   // default frame-rate is 8
   frameRate(8);                                              
+// pixelDensity(12);
 
   // create canvas
   canvas = createCanvas(cvW, cvH);
@@ -47,6 +58,8 @@ function setup() {
   tokenState.anmC = 0;
   tokenState.divNum = divNum;
   tokenState.slCh = slCh;
+  tokenState.cvW = cvW;
+  tokenState.cvH = cvH;
 
   // push defined loom to array
   tokenState.loom.push([
@@ -110,10 +123,10 @@ function placeLoom() {
 
   // if height/width was resized.. recalc the divisions, slants, etc. and append loom object for redrawing
   let
-    wS = windowWidth * 0.25,
-    wE = windowWidth * 0.75,
-    hS = windowHeight * 0.25,
-    hE = windowHeight * 0.75;
+    wS = tokenState.cvW * 0.25,
+    wE = tokenState.cvW * 0.75,
+    hS = tokenState.cvH * 0.25,
+    hE = tokenState.cvH * 0.75;
 
   tokenState.loom[0][2] = (wS) + ((wS) - (hS)) > 20 ? (wS) + ((wS) - (hS)) : 20;
   tokenState.loom[0][3] = (wE) - ((wS) - (hS));
@@ -127,7 +140,7 @@ function placeLoom() {
 }
 
 function windowResized(){
-  resizeCanvas(windowWidth, windowHeight);
+  resizeCanvas(tokenState.cvW, tokenState.cvH);
   if (!(String(tokenState.moving).toLowerCase() === 'true')) { rot(); }
   placeLoom();
 }
@@ -137,7 +150,7 @@ function windowResized(){
 function rot() {
   if(tokenState.rotCh) {
     rotate(-1.575);
-    translate(-(innerWidth/2) - (innerHeight/2), (innerWidth/2) - (innerHeight/2));
+    translate(-(tokenState.cvW/2) - (tokenState.cvH/2), (tokenState.cvW/2) - (tokenState.cvH/2));
   }
 }
 
