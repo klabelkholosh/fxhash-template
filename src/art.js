@@ -59,7 +59,6 @@ function setup() {
       let attempts = 0;
   
   
-      if(circles.length<500){
         while (count < total) {
           c = newCircle();
           if(c !== null) {
@@ -68,13 +67,12 @@ function setup() {
           }
           attempts++;
           if(attempts > 30) {                            // basically if we can't do more than this attempt in our shotgun total var blast, call it a day for draw()ing :)
-              // noLoop();
+              noLoop();
               console.log('DONE!', circles.length);
               break;
               
           }
         }
-      }
       
      
   
