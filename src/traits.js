@@ -185,6 +185,92 @@ function randomDate(start, end, rn) {
   return new Date(start.getTime() + rn * (end.getTime() - start.getTime()));
 }
 
+
+//-----------------------------------------------------------------------------
+// fill square area with noise
+// also, if you want to fill a shape area with noise, you can do so with a custom function.. 
+// to do so, use doShape (make it true), shapeFunc (use a custom shape function, with x,y of square point catered for whether it falls in shape defined
+// by function) and shapeVars for extra vars passed to function
+// 
+function doCutNoiseShape(stX, stY, wd, ht, xincr, yincr, clr, clrStrtLvl, clrEndLvl, randStrWt = false, doShape = false, shapeFunc = null, shapeVars = null, buf) {
+    
+  let x_off, y_off;
+
+  for(let y=stY;y<ht;y=y+yincr){
+      x_off += xincr;
+      y_off = 0;
+      for(let x=stX; x<wd; x=x+xincr) {
+
+        if(!doShape || ((doShape) && shapeFunc(x,y,...shapeVars))) {
+            buf.beginShape()
+            buf.vertex(x,y);
+
+            lerpCol = lerpedColorToWhite(clr, x, y, wd, clrStrtLvl, clrEndLvl, stX, stY, ht)
+            // lerpCol = lerpColor(noiseCol, whiteCol, (map(x+y,stX+stY,wd+ht,0,1) * noiseV*clrEndLvl));
+            if(randStrWt) { buf.strokeWeight(random(0.5, 2));}
+            buf.stroke(lerpCol);
+
+            buf.vertex(x+0.1,y);
+            buf.endShape();
+
+            y_off += yincr;
+          }
+      }
+  }
+}
+
+//-----------------------------------------------------------------------------
+// returns colour of a point (x,y) lerped within a given grid (stX, stY) from color level 1 -> 2, also averaged against x,y in whole window grid (windowHeigh, windowWidth)
+// x, y = coords of point being drawn that needs color changed
+// wd, ht = local width/height boundary coords of lerped area (that is, right-hand most width x coord and bottom-most y height coord)
+// stX, stY = 0,0 of lerped area
+// clrStttLvl = factor of given color to start with
+// clrEndLvl = factor of given color to end up with
+function lerpedColorToWhite(clr, x, y, wd, clrSttLvl, clrEndLvl, stX, stY, ht) {
+
+  let noiseV = noise(x*y,  y-80/(1+pow(x-(wd * noise(x/302,y/50)),4)/16e6)*noise(x/30/50+y));
+  let noiseCol = color(clr.levels[0]*clrSttLvl, clr.levels[1]*clrSttLvl, clr.levels[2]*clrSttLvl);
+  let whiteCol = color(clr.levels[0]*clrEndLvl, clr.levels[1]*clrEndLvl, clr.levels[2]*clrEndLvl);
+  // lerpCol = lerpColor(noiseCol, whiteCol, ((map(x+y,stX+stY,wd+ht,0,1) + map(x+y,stX+stY,windowHeight+windowWidth,0,1))/2) * noiseV*clrEndLvl);
+  lerpCol = lerpColor(noiseCol, whiteCol, ((map(x+y,stX+stY,wd+ht,0,1) + map(x+y,0,windowHeight+windowWidth,0,1))/2) * noiseV * clrEndLvl);
+  return(lerpCol);
+
+}
+
+//-----------------------------------------------------------------------------
+
+// draw a textured triangle
+function drawTxtrTri(x1, y1, x2, y2, x3, y3, clr, buf) {
+
+  let smX = Math.min(x1,x2,x3);
+  let lgX = Math.max(x1,x2,x3);
+  let smY = Math.min(y1,y2,y3);
+  let lgY = Math.max(y1,y2,y3);
+
+  // do cut noise, within the triangle bounds
+  doCutNoiseShape(smX, smY, lgX, lgY, ((lgX/smX)+(windowWidth/windowHeight))/3, ((lgY/smY)+(windowWidth/windowHeight))/3, clr, 0.7, 1.5, true, true, trianCollision, [x1, y1, x2, y2, x3, y3], buf);
+
+}
+
+//-----------------------------------------------------------------------------
+// calculate if point (px, py) is within area of 3 triangle points (x1,y1 & x2,y2, & x3,y3)
+function trianCollision(px, py, x1, y1, x2, y2, x3, y3) {
+  // get the area of the triangle
+  var areaOrig = floor(abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1)));
+
+  // get the area of 3 triangles made between the point and the corners of the triangle
+  var area1 = floor(abs((x1 - px) * (y2 - py) - (x2 - px) * (y1 - py)));
+  var area2 = floor(abs((x2 - px) * (y3 - py) - (x3 - px) * (y2 - py)));
+  var area3 = floor(abs((x3 - px) * (y1 - py) - (x1 - px) * (y3 - py)));
+  //console.log("areaSum: " + (area1 + area2 + area3));
+
+  // if the sum of the three areas equals the original, we're inside the triangle
+  if (area1 + area2 + area3 <= areaOrig) {
+    return true;
+  }
+  return false;
+}
+
 //-----------------------------------------------------------------------------
 
 // define the division data that will be used to generate the loom

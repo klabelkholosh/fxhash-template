@@ -42,6 +42,7 @@ function setup() {
     createCanvas(cvW, cvH);
     bgBuf = createGraphics(cvW, cvH);
     mainBuf = createGraphics(cvW, cvH);
+    onTopBuf = createGraphics(cvW, cvH);
 
     bgBuf.background(tokenData.bgCl);
     doCutNoise(0,0, width, height, 1.1,5.1, color(tokenData.bgCl), 0.1, 2, bgBuf);
@@ -120,6 +121,11 @@ function draw() {
     } else {
         //noLoop();
         // console.log('DONE OVERS!', circles.length);
+        circles.map(c => {
+           
+            // c.edges();
+            c.drawTriangles(onTopBuf);
+        });
     }
     
 
@@ -144,9 +150,10 @@ function draw() {
         c.show();
         c.grow();
         c.edges();
-        c.drawTriangles();
+        // c.drawTriangles();
     });
     image(mainBuf, 0, 0);
+    image(onTopBuf, 0, 0);
 }
 
 function doCutNoise(stX, stY, wd, ht, xincr, yincr, clr, clrStrtLvl, clrEndLvl, gfxBuffer) {
