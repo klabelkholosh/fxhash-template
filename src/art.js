@@ -13,44 +13,44 @@ function setup() {
 
     // grab hash from tokenData
     hash = tokenData.hash;
+
+    hash = "0x50e9d1028526fd285b4d5b465a9d4ad06b367c3241ba6ae8f7747f89aff01c20";
+
     console.log('hash:', hash);
+    randomSeed(hash);
 
     let {
-    seed,
-    rdPal,
-    slA,
-    ySlT,
-    stWt,
-    cvCh,
-    divs,
-    cvW,
-    cvH,
-    stX,
-    enX,
-    stY,
-    enY,
-    rotCh,
-    bgCl,
-    rndDy,
-    divNum,
-    slCh
+        seed,
+        rdPal,
+        cvW,
+        cvH,
+        bgCl,
+        ri,
+        rn
     } = hashToTraits(hash);
+
+    let scale = 2;
+    tokenData.scale = scale;
+    tokenData.ri = ri;
+    tokenData.rn = rn;
 
     tokenData.bgCl = bgCl;
     tokenData.rdPal = rdPal;
+    tokenData.cvW = cvW;
+    tokenData.cvH = cvH;
 
-    createCanvas(cvW, cvH);
-    bgBuf = createGraphics(cvW, cvH);
-    mainBuf = createGraphics(cvW, cvH);
-    onTopBuf = createGraphics(cvW, cvH);
+    createCanvas(cvW * tokenData.scale, cvH * tokenData.scale);
+    bgBuf = createGraphics(cvW * tokenData.scale, cvH * tokenData.scale);
+    mainBuf = createGraphics(cvW * tokenData.scale, cvH * tokenData.scale);
+    onTopBuf = createGraphics(cvW * tokenData.scale, cvH * tokenData.scale);
 
     bgBuf.background(tokenData.bgCl);
-    doCutNoise(0,0, width, height, 1.1,5.1, color(tokenData.bgCl), 0.1, 2, bgBuf);
+    doCutNoise(0,0, tokenData.cvW * tokenData.scale, tokenData.cvH * tokenData.scale, 1.1,5.1, color(tokenData.bgCl), 0.1, 2, bgBuf);
 
     //define points we can draw in!
-    for(let x=width*0.1; x<width*0.9; x++) {
-        for(let y=height*0.1; y<height*0.9; y++) {
-            //if(x<width*0.4 || x>width*0.6 || y<height*0.4 || y>height*0.6){ 
+    for(let x=(tokenData.cvW)*0.1; x<(tokenData.cvW)*0.9; x++) {
+        for(let y=(tokenData.cvH)*0.1; y<(tokenData.cvH)*0.9; y++) {
+            //if(x<tokenData.cvW*0.4 || x>tokenData.cvW*0.6 || y<(tokenData.cvH * tokenData.scale)*0.4 || y>(tokenData.cvH * tokenData.scale)*0.6){ 
                     drawPoints.push([x,y]); 
             //}
         }
@@ -64,15 +64,15 @@ function draw() {
     image(bgBuf, 0, 0);
     mainBuf.clear();
     /*
-    for(let x=width*0.4; x<width*0.6; x++) {
-        for(let y=height*0.2; y<height*0.8; y=y+5) {
+    for(let x=tokenData.cvW*0.4; x<tokenData.cvW*0.6; x++) {
+        for(let y=(tokenData.cvH * tokenData.scale)*0.2; y<(tokenData.cvH * tokenData.scale)*0.8; y=y+5) {
             let tmpClr = xpPal(random(tokenData.rdPal));
             if(circles.length > 0) {
                 let closestCirc = circles.filter(c => c.x !== x && c.y !== y).reduce((a,b) => {                     
                     return dist(x,y, a.x, a.y) <= dist(x, y, b.x, b.y) ? a : b;
                 });
-                // line(width*0.2, closestCirc.y, width*0.4 - random(10,100), closestCirc.y);
-                // line(width*0.6 + random(1,10), closestCirc.y, width*0.8, closestCirc.y);
+                // line(tokenData.cvW*0.2, closestCirc.y, tokenData.cvW*0.4 - random(10,100), closestCirc.y);
+                // line(tokenData.cvW*0.6 + random(1,10), closestCirc.y, tokenData.cvW*0.8, closestCirc.y);
 
             }
            
@@ -80,7 +80,7 @@ function draw() {
            
            
                    // drawPoints.push([x,y]);
-                  //  line(width*0.2, y, x, y);
+                  //  line(tokenData.cvW*0.2, y, x, y);
                   //  ellipse(0, 0, 100, 100);
         }
     }
@@ -120,18 +120,22 @@ function draw() {
         }
     } else {
         //noLoop();
-        // console.log('DONE OVERS!', circles.length);
+        // we're DONE OVERS, so do the static layer...
         circles.map(c => {
-           
-            // c.edges();
-            c.drawTriangles(onTopBuf);
+            if(c.triOnTop === true) {
+                c.drawMovementLines(onTopBuf, (tokenData.cvW), (tokenData.cvH));
+                c.drawTriangles(onTopBuf, (tokenData.cvW), (tokenData.cvH));
+            } else {
+                c.drawTriangles(onTopBuf, (tokenData.cvW), (tokenData.cvH));
+                c.drawMovementLines(onTopBuf, (tokenData.cvW), (tokenData.cvH));
+            }      
         });
     }
     
 
     circles.map(c => {
         if(c.growing) {
-            if(c.edges()) {                                                             // if we're on an edge, stop growing!
+            if(c.edges((tokenData.cvW), (tokenData.cvH))) {                                                             // if we're on an edge, stop growing!
                 c.growing = false; 
             } else {
                 for(let i=0; i<circles.length; i++) {                                   // check if we overlap with any other circle already defined
@@ -149,8 +153,7 @@ function draw() {
         c.recalcNeighbour(circles);
         c.show();
         c.grow();
-        c.edges();
-        // c.drawTriangles();
+        c.edges((tokenData.cvW), (tokenData.cvH));
     });
     image(mainBuf, 0, 0);
     image(onTopBuf, 0, 0);
@@ -179,7 +182,7 @@ function doCutNoise(stX, stY, wd, ht, xincr, yincr, clr, clrStrtLvl, clrEndLvl, 
                 clr.levels[1]*clrEndLvl,
                 clr.levels[2]*clrEndLvl);
 
-            lerpCol = lerpColor(noiseCol, whiteCol, ((map(x+y,stX+stY,wd+ht,0,1) + map(x+y,stX+stY,windowHeight+windowWidth,0,1))/2) * noiseV*clrEndLvl);
+            lerpCol = lerpColor(noiseCol, whiteCol, ((map(x+y,stX+stY,wd+ht,0,1) + map(x+y,stX+stY,(tokenData.cvH * tokenData.scale)+(tokenData.cvW * tokenData.scale),0,1))/2) * noiseV*clrEndLvl);
             // lerpCol = lerpColor(noiseCol, whiteCol, (map(x+y,stX+stY,wd+ht,0,1) * noiseV*clrEndLvl));
             gfxBuffer.stroke(lerpCol);
             gfxBuffer.fill(lerpCol);
@@ -194,10 +197,10 @@ function doCutNoise(stX, stY, wd, ht, xincr, yincr, clr, clrStrtLvl, clrEndLvl, 
 
 function newCircle() {
     // let spot = random(drawPoints);
-    let si = int(random(0, drawPoints.length));
+    let si = int(tokenData.ri(0, drawPoints.length));
     let spot = drawPoints[si];
-    let x = spot[0];
-    let y = spot[1];
+    let x = spot[0] ;
+    let y = spot[1] ;
     let valid = true;
 
     for(let i=0; i<circles.length; i++) { 

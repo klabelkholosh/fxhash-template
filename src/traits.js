@@ -192,7 +192,7 @@ function randomDate(start, end, rn) {
 // to do so, use doShape (make it true), shapeFunc (use a custom shape function, with x,y of square point catered for whether it falls in shape defined
 // by function) and shapeVars for extra vars passed to function
 // 
-function doCutNoiseShape(stX, stY, wd, ht, xincr, yincr, clr, clrStrtLvl, clrEndLvl, randStrWt = false, doShape = false, shapeFunc = null, shapeVars = null, buf) {
+function doCutNoiseShape(stX, stY, wd, ht, xincr, yincr, clr, clrStrtLvl, clrEndLvl, randStrWt = false, doShape = false, shapeFunc = null, shapeVars = null, buf, winW, winH) {
     
   let x_off, y_off;
 
@@ -205,7 +205,7 @@ function doCutNoiseShape(stX, stY, wd, ht, xincr, yincr, clr, clrStrtLvl, clrEnd
             buf.beginShape()
             buf.vertex(x,y);
 
-            lerpCol = lerpedColorToWhite(clr, x, y, wd, clrStrtLvl, clrEndLvl, stX, stY, ht)
+            lerpCol = lerpedColorToWhite(clr, x, y, wd, clrStrtLvl, clrEndLvl, stX, stY, ht, winW, winH)
             // lerpCol = lerpColor(noiseCol, whiteCol, (map(x+y,stX+stY,wd+ht,0,1) * noiseV*clrEndLvl));
             if(randStrWt) { buf.strokeWeight(random(0.5, 2));}
             buf.stroke(lerpCol);
@@ -226,13 +226,13 @@ function doCutNoiseShape(stX, stY, wd, ht, xincr, yincr, clr, clrStrtLvl, clrEnd
 // stX, stY = 0,0 of lerped area
 // clrStttLvl = factor of given color to start with
 // clrEndLvl = factor of given color to end up with
-function lerpedColorToWhite(clr, x, y, wd, clrSttLvl, clrEndLvl, stX, stY, ht) {
+function lerpedColorToWhite(clr, x, y, wd, clrSttLvl, clrEndLvl, stX, stY, ht, winW, winH) {
 
   let noiseV = noise(x*y,  y-80/(1+pow(x-(wd * noise(x/302,y/50)),4)/16e6)*noise(x/30/50+y));
   let noiseCol = color(clr.levels[0]*clrSttLvl, clr.levels[1]*clrSttLvl, clr.levels[2]*clrSttLvl);
   let whiteCol = color(clr.levels[0]*clrEndLvl, clr.levels[1]*clrEndLvl, clr.levels[2]*clrEndLvl);
   // lerpCol = lerpColor(noiseCol, whiteCol, ((map(x+y,stX+stY,wd+ht,0,1) + map(x+y,stX+stY,windowHeight+windowWidth,0,1))/2) * noiseV*clrEndLvl);
-  lerpCol = lerpColor(noiseCol, whiteCol, ((map(x+y,stX+stY,wd+ht,0,1) + map(x+y,0,windowHeight+windowWidth,0,1))/2) * noiseV * clrEndLvl);
+  lerpCol = lerpColor(noiseCol, whiteCol, ((map(x+y,stX+stY,wd+ht,0,1) + map(x+y,0,winH+winW,0,1))/2) * noiseV * clrEndLvl);
   return(lerpCol);
 
 }
@@ -240,7 +240,7 @@ function lerpedColorToWhite(clr, x, y, wd, clrSttLvl, clrEndLvl, stX, stY, ht) {
 //-----------------------------------------------------------------------------
 
 // draw a textured triangle
-function drawTxtrTri(x1, y1, x2, y2, x3, y3, clr, buf) {
+function drawTxtrTri(x1, y1, x2, y2, x3, y3, clr, buf, winW, winH) {
 
   let smX = Math.min(x1,x2,x3);
   let lgX = Math.max(x1,x2,x3);
@@ -248,7 +248,7 @@ function drawTxtrTri(x1, y1, x2, y2, x3, y3, clr, buf) {
   let lgY = Math.max(y1,y2,y3);
 
   // do cut noise, within the triangle bounds
-  doCutNoiseShape(smX, smY, lgX, lgY, ((lgX/smX)+(windowWidth/windowHeight))/3, ((lgY/smY)+(windowWidth/windowHeight))/3, clr, 0.7, 1.5, true, true, trianCollision, [x1, y1, x2, y2, x3, y3], buf);
+  doCutNoiseShape(smX, smY, lgX, lgY, ((lgX/smX)+(windowWidth/windowHeight))/3, ((lgY/smY)+(windowWidth/windowHeight))/3, clr, 0.7, 1.5, true, true, trianCollision, [x1, y1, x2, y2, x3, y3], buf, winW, winH);
 
 }
 
@@ -272,6 +272,36 @@ function trianCollision(px, py, x1, y1, x2, y2, x3, y3) {
 }
 
 //-----------------------------------------------------------------------------
+
+function setLineDash(list, buf) {
+  buf.drawingContext.setLineDash(list);
+}
+
+//-----------------------------------------------------------------------------
+function drawTxtrCirc(x, y, radX, radY, gaus, clr, buff, winW, winH) {
+
+  //doCutNoise(x-radX, y-radY, x+radX, y+radY, 1, 1, clr, 0.7, 1.7, true, true, circCollision, [x, y, radX/2]);
+  
+  buff.push();
+  buff.translate(x,y)
+  for(let l=0; l<300; l++){
+    let theta = random(0, TWO_PI);
+    let h = randomGaussian(gaus);
+    let r = (exp(h) - 1) / (exp(h) + 1);
+    let xV = radX/2 * r * cos(theta);
+    let yV = radY/2 * r * sin(theta);
+    if(clr) {
+      let pClr = lerpedColorToWhite(clr, x+xV, y+yV, x+(radX/2), 0.7, 1.7, x-(radX/2), y-(radY/2), y+(radY/2), winW, winH)
+      buff.stroke(pClr);
+    }
+    buff.point(xV, yV, 10);
+  }
+  buff.pop();
+  
+}
+
+//-----------------------------------------------------------------------------
+
 
 // define the division data that will be used to generate the loom
 function createDvs(rdPal, lineLayers, stX, enX, divNum, ri, rn, r) {
@@ -405,51 +435,21 @@ const hashToTraits = hash => {
   const [r, rn, ri] = mkRandom(hash);
 
   // size / dimension consts
-  const cvW = windowWidth;
-  const cvH = windowHeight;
-
-  const stX = (cvW * 0.25) + ((cvW * 0.25) - (cvH * 0.25)); // ensure we keep width at correct aspect ratio to height  
-  const enX = (cvW * 0.75) - ((cvW * 0.25) - (cvH * 0.25)); // ensure we keep width at correct aspect ratio to height
-  const stY = cvH * 0.25;    
-  const enY = cvH * 0.75;
+  const cvW = 1200;
+  const cvH = 800;
 
   const pNum = parseInt(selectRandomDist(palletDist, r));                                   // pick a random color pallette
   const rdPal = getPallet(pNum, r);
-  const rotCh =  parseInt(selectRandomDist(divDist, r)) >= 9 ? true : false;                // 21% chance to randomly rotate the canvas
-  const divNum = parseInt(selectRandomDist(divDist, r));                                    // we can have between 2 - 10 (rare ch for 15) color divisions
   const chBGc = parseInt(selectRandomDist(divDist, r));                                     // 11% chance of non-harmonious 'chaos' (any color!) background              
   const bgCl = getBG(rdPal, r, rn, ri, chBGc, 0);                                           // define the bg color as either a dulled/lightened color in the pallette, or a 'chaos' color
-  const slCh = parseInt(selectRandomDist(divDist, r));
-  let slA = 0;                                                                              // default 'slant' angle is endY pos of loom - startY pos of loom / 4,
-  const ySlT = (enY - stY) / 4;                                                
-  if(slCh > 5) {                                                                            // there's a 50% chance this will get applied
-    slA = ySlT;
-  }
-  const stWt = parseInt(selectRandomDist(stWtDist, r));                                     // the line weight of each strand can be between 2 (stringy) - 3 (solid)
-  const cvCh = parseInt(selectRandomDist(divDist, r)) >= 9 ? true : false;                  // 2 in 10 chance of sweeping bezier curves for some divisions
-  const rndDy = randomDate(new Date(2012, 0, 1), new Date(), rn(0,1));                      // on a random day/month of the year, the script will slide-animate for the entire day.
-  const divs = createDvs(rdPal, (enY - stY), stX, enX, divNum, ri, rn, r);                  // divisions config const
 
   return {
     rdPal,
-    pNum,
-    divNum,
-    chBGc,
     bgCl,
-    slA,
-    ySlT,
-    stWt,
-    cvCh,
-    rndDy,
-    divs,
     cvW,
     cvH,
-    stX,
-    enX,
-    stY,
-    enY,
-    rotCh,
-    slCh
+    ri,
+    rn
   };
 
 };
