@@ -17,24 +17,18 @@ npm-setup:
 # build
 #------------------------------------------------------------------------------
 
-.PHONY: default all clean dist
+.PHONY: default all dist
 
 default: all
 
-app/dist/art.js: src/traits.js src/art.js
+app/art.js: src/traits.js src/circle.js src/boot.js src/index.js src/art.js
 	gulp js:art
 
-app/dist/metadata.js: src/traits.js src/metadata.js
-	gulp js:metadata
-
-app/dist/art-min.js: app/dist/art.js
+app/min/art-min.js: app/art.js
 	gulp js:min
 
-all: app/dist/metadata.js app/dist/art-min.js
+all: app/min/art-min.js
 	:
-
-clean:
-	rm -rf app/dist/*
 
 #------------------------------------------------------------------------------
 # misc

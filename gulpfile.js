@@ -20,32 +20,23 @@ const concat = require('gulp-concat');
  * Build art script.
  */
 gulp.task('js:art', () => gulp
-  .src(['src/traits.js', 'src/art.js'])
-  .pipe(concat('art.js'))
-  .pipe(gulp.dest('app/dist'))
-);
-
-/**
- * Build metadata script.
- */
-gulp.task('js:metadata', () => gulp
-  .src(['src/traits.js', 'src/metadata.js'])
-  .pipe(concat('metadata.js'))
-  .pipe(gulp.dest('app/dist'))
+  .src(['src/traits.js', 'src/circle.js', 'src/boot.js', 'src/index.js', 'src/art.js'])
+  .pipe(concat('art-concat.js'))
+  .pipe(gulp.dest('app'))
 );
 
 /**
  * Minify script.
  */
-gulp.task('js:min', () => gulp
-  .src('app/dist/art.js')
+gulp.task('js:min', gulp.series('js:art'), () => gulp
+  .src(['app/art.js'])
   .pipe(babel({
       presets: [['minify', {
         typeConstructors: false
       }]],
       comments: false
   }))
-  .pipe(gulp.dest('app/dist/min'))
+  .pipe(gulp.dest('app/min'))
 );
 
 //-----------------------------------------------------------------------------

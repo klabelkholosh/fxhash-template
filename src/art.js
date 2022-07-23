@@ -7,17 +7,19 @@
 //-----------------------------------------------------------------------------
 
 let circles = [];
-let drawPoints = [];
+let fxPrevOccurred = false;
 
 function setup() {
 
     // grab hash from tokenData
-    hash = tokenData.hash;
+    //hash = tokenData.hash;
+    hash = fxhash; //FXHash!!
 
-    hash = "0x50e9d1028526fd285b4d5b465a9d4ad06b367c3241ba6ae8f7747f89aff01c20";
+    hash = "oowapvYE5Yfx4mrdDfivsE8ynnMnfBBJPUbGCiAUyLaeqdr2LrE";
 
     console.log('hash:', hash);
     randomSeed(hash);
+    noiseSeed(hash);
 
     let {
         seed,
@@ -28,76 +30,49 @@ function setup() {
         ri,
         rn
     } = hashToTraits(hash);
-
-    let scale = 2;
-    tokenData.scale = scale;
+    
     tokenData.ri = ri;
     tokenData.rn = rn;
-
     tokenData.bgCl = bgCl;
     tokenData.rdPal = rdPal;
     tokenData.cvW = cvW;
     tokenData.cvH = cvH;
 
-    createCanvas(cvW * tokenData.scale, cvH * tokenData.scale);
-    bgBuf = createGraphics(cvW * tokenData.scale, cvH * tokenData.scale);
-    mainBuf = createGraphics(cvW * tokenData.scale, cvH * tokenData.scale);
-    onTopBuf = createGraphics(cvW * tokenData.scale, cvH * tokenData.scale);
+    const ar_origin = tokenData.cvW / tokenData.cvH;
+    const ar_new = windowWidth / windowHeight;
+    let scale_w = windowWidth / tokenData.cvW;
+    let scale_h = windowHeight / tokenData.cvH;
+    if (ar_new > ar_origin) {
+        scale_w = scale_h;
+    } else {
+        scale_h = scale_w;
+    }
+    tokenData.scaleW = scale_w;
+    tokenData.scaleH = scale_h;
+
+    createCanvas(tokenData.cvW * tokenData.scaleW, tokenData.cvH * tokenData.scaleH);
+    bgBuf = createGraphics(tokenData.cvW * tokenData.scaleW, tokenData.cvH * tokenData.scaleH);
+    mainBuf = createGraphics(tokenData.cvW * tokenData.scaleW, tokenData.cvH * tokenData.scaleH);
+    onTopBuf = createGraphics(tokenData.cvW * tokenData.scaleW, tokenData.cvH * tokenData.scaleH);
 
     bgBuf.background(tokenData.bgCl);
-    doCutNoise(0,0, tokenData.cvW * tokenData.scale, tokenData.cvH * tokenData.scale, 1.1,5.1, color(tokenData.bgCl), 0.1, 2, bgBuf);
+    doCutNoise(0,0, tokenData.cvW * tokenData.scaleW, tokenData.cvH * tokenData.scaleH, 1.1,5.1, color(tokenData.bgCl), 0.1, 2, bgBuf);
 
     //define points we can draw in!
+    let tempDP = [];
     for(let x=(tokenData.cvW)*0.1; x<(tokenData.cvW)*0.9; x++) {
         for(let y=(tokenData.cvH)*0.1; y<(tokenData.cvH)*0.9; y++) {
-            //if(x<tokenData.cvW*0.4 || x>tokenData.cvW*0.6 || y<(tokenData.cvH * tokenData.scale)*0.4 || y>(tokenData.cvH * tokenData.scale)*0.6){ 
-                    drawPoints.push([x,y]); 
-            //}
+            tempDP.push([x,y]);
         }
     }
-
-    mainBuf.rectMode(CENTER);
+    tokenData.drawPoints = tempDP;
+    // mainBuf.rectMode(CENTER);
 
 }
 
 function draw() { 
     image(bgBuf, 0, 0);
     mainBuf.clear();
-    /*
-    for(let x=tokenData.cvW*0.4; x<tokenData.cvW*0.6; x++) {
-        for(let y=(tokenData.cvH * tokenData.scale)*0.2; y<(tokenData.cvH * tokenData.scale)*0.8; y=y+5) {
-            let tmpClr = xpPal(random(tokenData.rdPal));
-            if(circles.length > 0) {
-                let closestCirc = circles.filter(c => c.x !== x && c.y !== y).reduce((a,b) => {                     
-                    return dist(x,y, a.x, a.y) <= dist(x, y, b.x, b.y) ? a : b;
-                });
-                // line(tokenData.cvW*0.2, closestCirc.y, tokenData.cvW*0.4 - random(10,100), closestCirc.y);
-                // line(tokenData.cvW*0.6 + random(1,10), closestCirc.y, tokenData.cvW*0.8, closestCirc.y);
-
-            }
-           
-            stroke(`#${tmpClr}`);
-           
-           
-                   // drawPoints.push([x,y]);
-                  //  line(tokenData.cvW*0.2, y, x, y);
-                  //  ellipse(0, 0, 100, 100);
-        }
-    }
-    */
-
-    // noFill();
-   
-      //attempt shadow - BOOHOO SHADOW TOO SLOW. :(
-          /*
-      drawingContext.shadowOffsetX = 10;
-      drawingContext.shadowOffsetY = 10;
-      drawingContext.shadowBlur = random(12,50);
-      drawingContext.shadowColor = color(0,0,0,random(10,70));
-      */
-
-    
-
     
     let total = 3;                                     // so instead of just drawing one circle every draw() loop, we can do <whatevs this number is> at a time!
     let count = 0;
@@ -130,6 +105,10 @@ function draw() {
                 c.drawMovementLines(onTopBuf, (tokenData.cvW), (tokenData.cvH));
             }      
         });
+        if(!fxPrevOccurred) { 
+            fxpreview();
+            fxPrevOccurred = true;
+        }
     }
     
 
@@ -159,6 +138,33 @@ function draw() {
     image(onTopBuf, 0, 0);
 }
 
+function windowResized() {
+    const ar_origin = tokenData.cvW / tokenData.cvH;
+    const ar_new = windowWidth / windowHeight;
+    let scale_w = windowWidth / tokenData.cvW;
+    let scale_h = windowHeight / tokenData.cvH;
+    if (ar_new > ar_origin) {
+        scale_w = scale_h;
+    } else {
+        scale_h = scale_w;
+    }
+    tokenData.scaleW = scale_w;
+    tokenData.scaleH = scale_h;
+    resizeCanvas(tokenData.cvW * tokenData.scaleW, tokenData.cvH * tokenData.scaleH);
+    onTopBuf.clear();
+    circles.map(c => {
+        c.mvmentDrawn = false;
+        c.shapeDrawn = false;
+        if(c.triOnTop === true) {
+            c.drawMovementLines(onTopBuf, (tokenData.cvW), (tokenData.cvH));
+            c.drawTriangles(onTopBuf, (tokenData.cvW), (tokenData.cvH));
+        } else {
+            c.drawTriangles(onTopBuf, (tokenData.cvW), (tokenData.cvH));
+            c.drawMovementLines(onTopBuf, (tokenData.cvW), (tokenData.cvH));
+        }      
+    });
+}
+
 function doCutNoise(stX, stY, wd, ht, xincr, yincr, clr, clrStrtLvl, clrEndLvl, gfxBuffer) {
     
     let x_off, y_off;
@@ -182,7 +188,7 @@ function doCutNoise(stX, stY, wd, ht, xincr, yincr, clr, clrStrtLvl, clrEndLvl, 
                 clr.levels[1]*clrEndLvl,
                 clr.levels[2]*clrEndLvl);
 
-            lerpCol = lerpColor(noiseCol, whiteCol, ((map(x+y,stX+stY,wd+ht,0,1) + map(x+y,stX+stY,(tokenData.cvH * tokenData.scale)+(tokenData.cvW * tokenData.scale),0,1))/2) * noiseV*clrEndLvl);
+            lerpCol = lerpColor(noiseCol, whiteCol, ((map(x+y,stX+stY,wd+ht,0,1) + map(x+y,stX+stY,(tokenData.cvH * tokenData.scaleH)+(tokenData.cvW * tokenData.scaleW),0,1))/2) * noiseV*clrEndLvl);
             // lerpCol = lerpColor(noiseCol, whiteCol, (map(x+y,stX+stY,wd+ht,0,1) * noiseV*clrEndLvl));
             gfxBuffer.stroke(lerpCol);
             gfxBuffer.fill(lerpCol);
@@ -196,9 +202,8 @@ function doCutNoise(stX, stY, wd, ht, xincr, yincr, clr, clrStrtLvl, clrEndLvl, 
 }
 
 function newCircle() {
-    // let spot = random(drawPoints);
-    let si = int(tokenData.ri(0, drawPoints.length));
-    let spot = drawPoints[si];
+    let si = int(tokenData.ri(0, tokenData.drawPoints.length));
+    let spot = tokenData.drawPoints[si];
     let x = spot[0] ;
     let y = spot[1] ;
     let valid = true;

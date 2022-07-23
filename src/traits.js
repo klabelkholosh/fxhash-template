@@ -53,12 +53,30 @@ const randomNumber = r => (a, b) => a + (b - a) * r();
 
 const randomInt = rn => (a, b) => Math.floor(rn(a, b + 1));
 
+
+// Bitcoin Base58 encoder/decoder algorithm
+const btcTable = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+console.assert(btcTable.length === 58);
+
+// Base58 decoder/encoder for BigInt
+function b58ToBi(chars, table = btcTable) {
+  const carry = BigInt(table.length);
+  let total = 0n, base = 1n;
+  for (let i = chars.length - 1; i >= 0; i--) {
+    const n = table.indexOf(chars[i]);
+    if (n < 0) throw TypeError(`invalid letter contained: '${chars[i]}'`);
+    total += base * BigInt(n);
+    base *= carry;
+  }
+  return total;
+}
+
 //-----------------------------------------------------------------------------
 
 const mkRandom = hash => {
   const s  = Array(4).fill()
-    .map((_,i) => i * 16 + 2)
-    .map(idx => u64(`0x${hash.slice(idx, idx + 16)}`));
+    .map((_,i) => i * 12.75 + 2)
+    .map(idx =>  b58ToBi(hash.slice(idx, idx + 12.75), btcTable));
   const xss = xoshiro256strstr(s);
   const r  = randomDecimal(xss);
   const rn = randomNumber(r);

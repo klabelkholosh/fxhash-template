@@ -2,42 +2,43 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>A Genetic Chain Project</title>
+    <title>transmission-88</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-    <!-- third party libs
-           uncomment out the third party library you wish to use.
-           there should be an example of referencing the library and
-           setting up the canvas in the art.js file. -->
-    <!--
-    <script src="thirdparty/three-r128.min.js"></script>
-     -->
-    <script src="thirdparty/p5-v1.4.0.min.js"></script>
+    <script src="p5-v1.4.0.min.js"></script>
    
-
     <!-- js/styles -->
-    <script src="boot.js"></script>
-    <script src="dist/circle.js"></script>
-    <script src="dist/art.js"></script>
-    <script src="index.js"></script>
+    <script id="fxhash-snippet">
+      //---- do not edit the following code (you can indent as you wish)
+      let alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
+      var fxhash = "oo" + Array(49).fill(0).map(_=>alphabet[(Math.random()*alphabet.length)|0]).join('')
+      let b58dec = str=>[...str].reduce((p,c)=>p*alphabet.length+alphabet.indexOf(c)|0, 0)
+      let fxhashTrunc = fxhash.slice(2)
+      let regex = new RegExp(".{" + ((fxhashTrunc.length/4)|0) + "}", 'g')
+      let hashes = fxhashTrunc.match(regex).map(h => b58dec(h))
+      let sfc32 = (a, b, c, d) => {
+        return () => {
+          a |= 0; b |= 0; c |= 0; d |= 0
+          var t = (a + b | 0) + d | 0
+          d = d + 1 | 0
+          a = b ^ b >>> 9
+          b = c + (c << 3) | 0
+          c = c << 21 | c >>> 11
+          c = c + t | 0
+          return (t >>> 0) / 4294967296
+        }
+      }
+      var fxrand = sfc32(...hashes)
+      // true if preview mode active, false otherwise
+      // you can append preview=1 to the URL to simulate preview active
+      var isFxpreview = new URLSearchParams(window.location.search).get('preview') === "1"
+      // call this method to trigger the preview
+      function fxpreview() {
+        console.log("fxhash: TRIGGER PREVIEW")
+      }
+      //---- /do not edit the following code
+    </script>
+    <script src="art-concat.js"></script>
     <link rel="stylesheet" type="text/css" href="index.css">
-
   </head>
-<!--
-  <body class="body-ct">
-    <div class="controls">
-
-      <label for="moving">moving</label>
-      <input type="checkbox" id="moving" onChange="onChangeMoving(this.checked)" checked>
-
-      <label for="flutA">flutter</label>
-      <input id="flutA" type="range" min="-7" max="20" value="0" step="1" oninput="onChangeFlutA(this.value);" onmousedown="onMousSldrTog()" onmouseup="onMousSldrTog()">
-
-      <label for="lnThk">weight</label>
-      <input id="lnThk" type="range" min="-1" max="4" value="0" step="0.1" oninput="onChangeLnThk(this.value);" onmousedown="onMousSldrTog()" onmouseup="onMousSldrTog()">
-
-    </div>
- </body>
--->
 </html>
