@@ -14,9 +14,7 @@ function setup() {
     // grab hash from tokenData
     //hash = tokenData.hash;
     hash = fxhash; //FXHash!!
-
-    hash = "oowapvYE5Yfx4mrdDfivsE8ynnMnfBBJPUbGCiAUyLaeqdr2LrE";
-
+    // hash = "oowapvYE5Yfx4mrdDfivsE8ynnMnfBBJPUbGCiAUyLaeqdr2LrE";
     console.log('hash:', hash);
     randomSeed(hash);
     noiseSeed(hash);
@@ -31,6 +29,9 @@ function setup() {
         rn
     } = hashToTraits(hash);
     
+    console.log('rdPal:', rdPal);
+
+    tokenState.runScript = true;
     tokenData.ri = ri;
     tokenData.rn = rn;
     tokenData.bgCl = bgCl;
@@ -70,75 +71,87 @@ function setup() {
 
 }
 
-function draw() { 
-    image(bgBuf, 0, 0);
-    mainBuf.clear();
-    
-    let total = 3;                                     // so instead of just drawing one circle every draw() loop, we can do <whatevs this number is> at a time!
-    let count = 0;
-    let attempts = 0;
-
-    if(circles.length < 300) { // hard limit
-        while (count < total) {
-            c = newCircle();
-            if(c !== null) {
-                circles.push(c);
-                count++;
-            }
-            attempts++;
-            if(attempts > 8) {                            // basically if we can't do more than this attempt in our shotgun total var blast, call it a day for draw()ing :)
-                // noLoop();
-                // console.log('DONE!', circles.length);
-                break;
-                
-            }
-        }
-    } else {
-        //noLoop();
-        // we're DONE OVERS, so do the static layer...
-        circles.map(c => {
-            if(c.triOnTop === true) {
-                c.drawMovementLines(onTopBuf, (tokenData.cvW), (tokenData.cvH));
-                c.drawTriangles(onTopBuf, (tokenData.cvW), (tokenData.cvH));
-            } else {
-                c.drawTriangles(onTopBuf, (tokenData.cvW), (tokenData.cvH));
-                c.drawMovementLines(onTopBuf, (tokenData.cvW), (tokenData.cvH));
-            }      
-        });
-        if(!fxPrevOccurred) { 
-            fxpreview();
-            fxPrevOccurred = true;
-        }
+function keyPressed() {
+    // if SPACE or 'S' is pressed...
+    if (keyCode === 32 || keyCode === 83) {
+      tokenState.runScript = !tokenState.runScript;
     }
-    
+  }
 
-    circles.map(c => {
-        if(c.growing) {
-            if(c.edges((tokenData.cvW), (tokenData.cvH))) {                                                             // if we're on an edge, stop growing!
-                c.growing = false; 
-            } else {
-                for(let i=0; i<circles.length; i++) {                                   // check if we overlap with any other circle already defined
-                    let othC = circles[i];
-                    if(c != othC) {                                                     // don't check against yourself!
-                        let d = dist(c.x, c.y, othC.x, othC.y);
-                        if (d - 2.5 < (c.r+othC.r)) {                                   // if distance between centerpoints of both circles less than both circles radii plussed, we're overlapping obvs :)
-                            c.growing = false;
-                            break;
-                        }
-                    }
-                };
+function draw() { 
+
+    if(tokenState.runScript) {
+        image(bgBuf, 0, 0);
+        mainBuf.clear();
+        
+        let total = 3;                                     // so instead of just drawing one circle every draw() loop, we can do <whatevs this number is> at a time!
+        let count = 0;
+        let attempts = 0;
+    
+        if(circles.length < 300) { // hard limit
+            while (count < total) {
+                c = newCircle();
+                if(c !== null) {
+                    circles.push(c);
+                    count++;
+                }
+                attempts++;
+                if(attempts > 8) {                            // basically if we can't do more than this attempt in our shotgun total var blast, call it a day for draw()ing :)
+                    // noLoop();
+                    // console.log('DONE!', circles.length);
+                    break;
+                    
+                }
+            }
+        } else {
+            //noLoop();
+            // we're DONE OVERS, so do the static layer...
+            circles.map(c => {
+                if(c.triOnTop === true) {
+                    c.drawMovementLines(onTopBuf, (tokenData.cvW), (tokenData.cvH));
+                    c.drawTriangles(onTopBuf, (tokenData.cvW), (tokenData.cvH));
+                } else {
+                    c.drawTriangles(onTopBuf, (tokenData.cvW), (tokenData.cvH));
+                    c.drawMovementLines(onTopBuf, (tokenData.cvW), (tokenData.cvH));
+                }      
+            });
+            image(onTopBuf, 0, 0);
+            if(!fxPrevOccurred) { 
+                fxpreview();
+                fxPrevOccurred = true;
             }
         }
-        c.recalcNeighbour(circles);
-        c.show();
-        c.grow();
-        c.edges((tokenData.cvW), (tokenData.cvH));
-    });
-    image(mainBuf, 0, 0);
-    image(onTopBuf, 0, 0);
+        
+    
+        circles.map(c => {
+            if(c.growing) {
+                if(c.edges((tokenData.cvW), (tokenData.cvH))) {                                                             // if we're on an edge, stop growing!
+                    c.growing = false; 
+                } else {
+                    for(let i=0; i<circles.length; i++) {                                   // check if we overlap with any other circle already defined
+                        let othC = circles[i];
+                        if(c != othC) {                                                     // don't check against yourself!
+                            let d = dist(c.x, c.y, othC.x, othC.y);
+                            if (d - 2.5 < (c.r+othC.r)) {                                   // if distance between centerpoints of both circles less than both circles radii plussed, we're overlapping obvs :)
+                                c.growing = false;
+                                break;
+                            }
+                        }
+                    };
+                }
+            }
+            c.recalcNeighbour(circles);
+            c.show();
+            c.grow();
+            c.edges((tokenData.cvW), (tokenData.cvH));
+        });
+        image(mainBuf, 0, 0);
+    }
+   
 }
 
 function windowResized() {
+    
     const ar_origin = tokenData.cvW / tokenData.cvH;
     const ar_new = windowWidth / windowHeight;
     let scale_w = windowWidth / tokenData.cvW;
@@ -163,6 +176,9 @@ function windowResized() {
             c.drawMovementLines(onTopBuf, (tokenData.cvW), (tokenData.cvH));
         }      
     });
+    image(onTopBuf, 0, 0);
+    
+    //location.reload();
 }
 
 function doCutNoise(stX, stY, wd, ht, xincr, yincr, clr, clrStrtLvl, clrEndLvl, gfxBuffer) {

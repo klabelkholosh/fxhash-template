@@ -29,6 +29,10 @@ class Circle {
         this.divXBy = tokenData.rn(0, 1) > 0.5 ? 1 : 2;
         this.divYBy = this.divXBy === 1 ? 2 : 1;
         this.txtCircGaussBound = tokenData.ri(5,10);
+        this.cubeStyle = [];
+        for(let lc = 1; lc<=this.layeredCubes; lc++) {
+            this.cubeStyle.push(tokenData.rn(0, 1) > 0.5 ? 'spiral' : 'lines');
+        }
     }
 
     show() {
@@ -82,7 +86,7 @@ class Circle {
         return(this.x+this.r > winW || this.x-this.r < 0 || this.y+this.r > winH || this.y-this.r < 0);
     }
 
-    drawCube(xx, yy, c, r, z, buffer) {
+    drawCube(xx, yy, c, r, z, buffer, cubeStyle) {
 
         let x = xx + (c - r) * 50 * sqrt(3) / 2;
         let y = yy + (c + r) * 50 / 2 - (50 * z);
@@ -90,13 +94,6 @@ class Circle {
         let incr = 2;
         let points = [];
         let smallCube = tokenData.rn(0.75,3); // normally 1
-        // smallCube = 1;
-        let cubeStyle;
-        if(tokenData.rn(0, 1) > 0.5) {
-            cubeStyle = 'spiral';
-        } else {
-            cubeStyle = 'lines';
-        }
         
         for (let angle = PI / 6; angle < PI * 2; angle += PI / 3) {
             points.push(
@@ -359,7 +356,7 @@ class Circle {
                         buffer.strokeWeight(tokenData.rn(0, 1)); // thin between 0.1 and 1
                         this.drawCube(
                             c[0].x, c[0].y,
-                            1, 1, 1, buffer
+                            1, 1, 1, buffer, this.cubeStyle[l]
                         );
                     }
                     
