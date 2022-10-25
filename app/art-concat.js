@@ -8,7 +8,7 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// FXHASH SPECIFIC :) don't touch this, basically.
+// FXHASH SPECIFIC :)
 //-----------------------------------------------------------------------------
 // Bitcoin Base58 encoder/decoder algorithm
 const btcTable = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
@@ -41,7 +41,7 @@ const mkRandom = (hash) => {
 };
 
 //-----------------------------------------------------------------------------
-// other possibly helpful functions - some used in above, others not..
+// other possibly helpful functions
 //-----------------------------------------------------------------------------
 
 const u64 = (n) => BigInt.asUintN(64, n);
@@ -72,14 +72,25 @@ const xoshiro256strstr = (s) => () => {
   return result;
 };
 
+//-----------------------------------------------------------------------------
+
+/**
+ * Returns a float between [0, 1) (inclusive of 0, exclusive of 1).
+ */
 const randomDecimal = (xss) => () => {
   const t = xss();
   return Number(t % 9007199254740991n) / 9007199254740991;
 };
 
+//-----------------------------------------------------------------------------
+
 const randomNumber = (r) => (a, b) => a + (b - a) * r();
 
+//-----------------------------------------------------------------------------
+
 const randomInt = (rn) => (a, b) => Math.floor(rn(a, b + 1));
+
+//-----------------------------------------------------------------------------
 
 function medianOfInt(value) {
   var half = Math.floor(value / 2);
@@ -88,6 +99,7 @@ function medianOfInt(value) {
 
   return (half - 1 + half) / 2.0;
 }
+//-----------------------------------------------------------------------------
 
 const shuffle = (array, r) => {
   let m = array.length,
@@ -104,9 +116,15 @@ const shuffle = (array, r) => {
   return array;
 };
 
+//-----------------------------------------------------------------------------
+
 const repeat = (item, n) => Array.from({ length: n }).map((_) => item);
 
+//-----------------------------------------------------------------------------
+
 const selectRandom = (array, r) => array[Math.floor(r() * array.length)];
+
+//-----------------------------------------------------------------------------
 
 const selectRandomDist = (distMap, r) => {
   const keys = Object.keys(distMap).reduce(
@@ -144,6 +162,7 @@ function getBG(rdPal, r1, rn, ri) {
   bgCl = changeCC(selectRandom(rdPal, r1), rn(0.45, 0.75));
 
   // check for not too similar to anything else in palette, otherwise crank up the brightness
+
   rdPal.map((p) => {
     let cPd = parseInt(xpPal(p), 16),
       l1 = bgCl.levels[0],
@@ -165,7 +184,7 @@ function getBG(rdPal, r1, rn, ri) {
         l1 = 255;
         l2 = 255;
         l3 = 255;
-      } // extremely rare chance with palette 6 with black bg & black other to not blend, therefore set to grey
+      } // extremely rare chance with ixchel with black bg & black other to not blend, therefore set to grey
       bgCl = changeCC([toHex(l1), toHex(l2), toHex(l3)].join(''), 0.5);
     }
   });
@@ -249,3 +268,124 @@ const hashToTraits = (hash) => {
     bgCol,
   };
 };
+
+// vim: ts=2:sw=2
+//-----------------------------------------------------------------------------
+// boot.js - bootstrap script with global data
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// testing
+//-----------------------------------------------------------------------------
+
+const randomHash = size => {
+  const digits = "0123456789abcdef";
+  return '0x' + [...Array(size).keys()]
+    .map(() => digits[Math.floor(Math.random() * digits.length)])
+    .join('');
+};
+
+//-----------------------------------------------------------------------------
+// globals
+//-----------------------------------------------------------------------------
+
+const tokenData = {
+  projectId: 1,
+  tokenId: 1,
+  hash: randomHash(64)
+};
+
+//-----------------------------------------------------------------------------
+// flatA = flattenAngle, lnThk = lineThickness, flutA = flutterAdd
+const tokenState = {
+  lnThk: "0",
+  flutA: "0",
+  moving: "true"
+};
+
+// vim: ts=2:sw=2
+//-----------------------------------------------------------------------------
+// index.js - handle testing state controls
+//-----------------------------------------------------------------------------
+
+/**
+ * Handle paused, flutter and line thickness state change.
+ */
+
+const onChangeMoving = checked => {
+  tokenState.moving = checked;
+};
+
+const onChangeFlutA = value => {
+  tokenState.flutA = parseInt(value);
+};
+
+const onChangeLnThk = value => {
+  tokenState.lnThk = parseInt(value);
+};
+
+const onMousSldrTog = () => {
+  if(!document.getElementById('moving').checked) {
+    tokenState.moving = !tokenState.moving;
+  }
+};
+
+//-----------------------------------------------------------------------------
+// art.js - art generation
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// functions
+//-----------------------------------------------------------------------------
+//
+// CHECK EVERYTHING MARKED AS  //FXHash!! , as this is FXHash specific stuff :)
+//
+
+let fxPrevOccurred = false;
+
+function setup() {
+  //FXHash!!
+  //----------
+  hash = fxhash; // this is the random hash, different every page refresh (basically different for every generated artwork), script can use this hash to do random generations
+  console.log('hash:', hash);
+  randomSeed(hash);
+  noiseSeed(hash);
+  //----------
+
+  let { cvW, cvH, randPal, bgCol } = hashToTraits(hash);
+
+  //FXHash!! - here define the token features
+  window.$fxhashFeatures = {
+    someCoolFeature1: '1',
+    someCoolRarityFeature2: '2',
+  };
+
+  // default frame-rate is 8
+  frameRate(8);
+
+  // create canvas
+  createCanvas(cvW, cvH);
+
+  //-------------------------------------
+  // actually draw some stuff...  you can do this here in setup() (which is a once-off draw) or in draw() (which will draw something every frame - animations, etc.)
+  //-------------------------------------
+  // set background colour from our random bg color in traits.js
+  background(bgCol);
+
+  // draw a damn square
+  square(20, 20, 50);
+
+  //-------------------------------------
+
+  //FXHash!! - when to take a snapshot of your script for a preview image on Fxhash site
+  if (!fxPrevOccurred) {
+    fxpreview();
+    fxPrevOccurred = true;
+  }
+}
+
+/**
+ * Draw is required to be defined for processing library to load into the
+ *  global scope.
+ */
+function draw() {}
