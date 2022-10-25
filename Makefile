@@ -21,7 +21,7 @@ npm-setup:
 
 default: all
 
-app/art.js: src/traits.js src/circle.js src/boot.js src/index.js src/art.js
+app/art.js: src/traits.js src/boot.js src/index.js src/art.js	# hi ben! make sure this is a list of your files in src :)
 	gulp js:art
 
 app/min/art-min.js: app/art.js
