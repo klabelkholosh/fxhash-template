@@ -8,7 +8,7 @@
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-// FXHASH SPECIFIC :)
+// FXHASH SPECIFIC :) don't touch this, basically.
 //-----------------------------------------------------------------------------
 // Bitcoin Base58 encoder/decoder algorithm
 const btcTable = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
@@ -41,7 +41,7 @@ const mkRandom = (hash) => {
 };
 
 //-----------------------------------------------------------------------------
-// other possibly helpful functions
+// other possibly helpful functions - some used in above, others not..
 //-----------------------------------------------------------------------------
 
 const u64 = (n) => BigInt.asUintN(64, n);
@@ -72,25 +72,14 @@ const xoshiro256strstr = (s) => () => {
   return result;
 };
 
-//-----------------------------------------------------------------------------
-
-/**
- * Returns a float between [0, 1) (inclusive of 0, exclusive of 1).
- */
 const randomDecimal = (xss) => () => {
   const t = xss();
   return Number(t % 9007199254740991n) / 9007199254740991;
 };
 
-//-----------------------------------------------------------------------------
-
 const randomNumber = (r) => (a, b) => a + (b - a) * r();
 
-//-----------------------------------------------------------------------------
-
 const randomInt = (rn) => (a, b) => Math.floor(rn(a, b + 1));
-
-//-----------------------------------------------------------------------------
 
 function medianOfInt(value) {
   var half = Math.floor(value / 2);
@@ -99,7 +88,6 @@ function medianOfInt(value) {
 
   return (half - 1 + half) / 2.0;
 }
-//-----------------------------------------------------------------------------
 
 const shuffle = (array, r) => {
   let m = array.length,
@@ -116,15 +104,9 @@ const shuffle = (array, r) => {
   return array;
 };
 
-//-----------------------------------------------------------------------------
-
 const repeat = (item, n) => Array.from({ length: n }).map((_) => item);
 
-//-----------------------------------------------------------------------------
-
 const selectRandom = (array, r) => array[Math.floor(r() * array.length)];
-
-//-----------------------------------------------------------------------------
 
 const selectRandomDist = (distMap, r) => {
   const keys = Object.keys(distMap).reduce(
@@ -162,7 +144,6 @@ function getBG(rdPal, r1, rn, ri) {
   bgCl = changeCC(selectRandom(rdPal, r1), rn(0.45, 0.75));
 
   // check for not too similar to anything else in palette, otherwise crank up the brightness
-
   rdPal.map((p) => {
     let cPd = parseInt(xpPal(p), 16),
       l1 = bgCl.levels[0],
@@ -184,7 +165,7 @@ function getBG(rdPal, r1, rn, ri) {
         l1 = 255;
         l2 = 255;
         l3 = 255;
-      } // extremely rare chance with ixchel with black bg & black other to not blend, therefore set to grey
+      } // extremely rare chance with palette 6 with black bg & black other to not blend, therefore set to grey
       bgCl = changeCC([toHex(l1), toHex(l2), toHex(l3)].join(''), 0.5);
     }
   });
@@ -346,12 +327,22 @@ let fxPrevOccurred = false;
 function setup() {
   //FXHash!!
   //----------
-  hash = fxhash; // this is the random hash, different every page refresh (basically different for every generated artwork), script can use this hash to do random generations
+  // this is the random hash, different every page refresh (basically different for every generated artwork), script can use this hash to do random generations
+  hash = fxhash;
+
+  // Try uncommenting this line below! You'll set the hash to be the same every time.. notice that the artwork will now always generate the same result, if you reload the page.
+  // hash = 'ooxCBqdymaLnvsBcrXSahPUAxg2iZQya6cckbKANB9iPhcVqqbA';
+
+  // just so we can see the hash in Console..
   console.log('hash:', hash);
+
+  // ensure any time you use the random() or noise() functions, they're tied to the hash, and thus consistent!
   randomSeed(hash);
   noiseSeed(hash);
+
   //----------
 
+  // grab our random variables from traits.js
   let { cvW, cvH, randPal, bgCol } = hashToTraits(hash);
 
   //FXHash!! - here define the token features
@@ -366,16 +357,19 @@ function setup() {
   // create canvas
   createCanvas(cvW, cvH);
 
-  //-------------------------------------
+  //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // actually draw some stuff...  you can do this here in setup() (which is a once-off draw) or in draw() (which will draw something every frame - animations, etc.)
-  //-------------------------------------
+  // this is where you'd paste your personal art code, and ensure it uses the random stuff (such as random palettes, etc.) from traits.js.
+  //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
   // set background colour from our random bg color in traits.js
   background(bgCol);
 
-  // draw a damn square
+  // draw a damn square - fill it with our random color
+  fill(retCl(random(randPal)));
   square(20, 20, 50);
 
-  //-------------------------------------
+  //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
   //FXHash!! - when to take a snapshot of your script for a preview image on Fxhash site
   if (!fxPrevOccurred) {
@@ -384,8 +378,5 @@ function setup() {
   }
 }
 
-/**
- * Draw is required to be defined for processing library to load into the
- *  global scope.
- */
+// put stuff here if you want to draw something every frame - animations, etc., but otherwise put it in setup()
 function draw() {}

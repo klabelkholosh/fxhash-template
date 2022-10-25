@@ -53,7 +53,7 @@ function setup() {
   background(bgCol);
 
   // draw a damn square - fill it with our random color
-  fill(randPal);
+  fill(retCl(random(randPal)));
   square(20, 20, 50);
 
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

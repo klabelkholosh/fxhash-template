@@ -7,6 +7,7 @@
 'npm install' should work
 use 'make' in the script root directory to build the script
 (if 'make' doesn't work, try 'source .env && make')
+(also try 'make && make watch' or 'source .env && make && make watch' if you want the script to auto-recompile every time you make a change/save a file )
 
 ## Customize
 
