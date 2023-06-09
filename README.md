@@ -1,4 +1,4 @@
-## fxhash template
+# Fxhash Template
 
 - A badly written fxhash template.
 - This was written to make my life (and potentially others' lives) easier with uploading generative art script to Fxhash!
