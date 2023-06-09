@@ -1,7 +1,7 @@
 ## fxhash template
 
 - A badly written fxhash template.
-- This was written to make my life easier with uploading generative art script to Fxhash!
+- This was written to make my life (and potentially others' lives) easier with uploading generative art script to Fxhash!
 
 ## Installation
 
